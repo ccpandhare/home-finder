@@ -73,6 +73,18 @@
                         <span class="commute-value">{{ area.train_minutes }} min</span>
                     </div>
                     {% endif %}
+                    <div class="commute-info-item commute-route-item">
+                        <span class="commute-label">Route</span>
+                        <span class="commute-value {% if area.mainline_changes == 0 %}route-direct{% else %}route-change{% endif %}">
+                            {{ area.route_summary or 'Direct service available' }}
+                        </span>
+                    </div>
+                    {% if area.mainline_changes and area.mainline_changes > 0 %}
+                    <div class="commute-info-item commute-changes-item">
+                        <span class="commute-label">Mainline Changes</span>
+                        <span class="commute-value route-change">{{ area.mainline_changes }} change{% if area.mainline_changes > 1 %}s{% endif %}</span>
+                    </div>
+                    {% endif %}
                     {% if cache.commute and cache.commute.trains_per_hour %}
                     <div class="commute-info-item">
                         <span class="commute-label">Trains/Hour</span>

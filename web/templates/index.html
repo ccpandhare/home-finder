@@ -129,6 +129,9 @@
                             onclick="window.location.href='/area/{{ area.name | urlencode }}'">
                             <td class="commute-cell">
                                 <span class="commute-badge">{{ area.commute_minutes }} min</span>
+                                {% if area.mainline_changes and area.mainline_changes > 0 %}
+                                <span class="route-warning" title="{{ area.mainline_changes }} mainline change{% if area.mainline_changes > 1 %}s{% endif %} required">⚠️</span>
+                                {% endif %}
                             </td>
                             <td class="name-cell">
                                 <span class="area-name-link">{{ area.name }}</span>

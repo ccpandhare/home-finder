@@ -505,6 +505,12 @@ footer a {
     font-size: 0.8rem;
 }
 
+.route-warning {
+    margin-left: 0.25rem;
+    cursor: help;
+    font-size: 0.8rem;
+}
+
 .name-cell {
     font-weight: 500;
 }
@@ -913,6 +919,20 @@ footer a {
 .commute-highlight {
     color: var(--primary);
     font-size: 1.25rem;
+}
+
+/* Route status styling */
+.route-direct {
+    color: var(--success);
+}
+
+.route-change {
+    color: var(--warning);
+}
+
+.commute-route-item .commute-value,
+.commute-changes-item .commute-value {
+    font-size: 0.9rem;
 }
 
 /* Score Breakdown Grid */

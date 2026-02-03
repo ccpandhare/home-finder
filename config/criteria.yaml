@@ -15,6 +15,12 @@ commute:
     lng: -0.1238
   max_minutes: 60
   walking_buffer_minutes: 10  # Time to walk to station
+  # Train change preferences
+  # Ideal: 1 mainline train into London, tube/bus within London is fine
+  # Penalize: 2+ mainline trains (e.g., change at Bedford)
+  train_change_penalty:
+    ideal_mainline_changes: 0  # Direct service is ideal
+    penalty_per_change: 15     # Deduct 15 points per mainline change from commute score
 
 # Property requirements
 property:

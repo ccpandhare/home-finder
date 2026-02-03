@@ -30,7 +30,7 @@ def score_area(area: dict, amenities: dict, nature: dict) -> int:
     # Perfect score if commute <= 30 min, decreasing to 0 at max_minutes
     max_minutes = criteria["commute"]["max_minutes"]
     commute = area.get("commute_minutes", max_minutes)
-    
+
     if commute <= 30:
         scores["commute"] = 100
     elif commute >= max_minutes:
@@ -38,6 +38,15 @@ def score_area(area: dict, amenities: dict, nature: dict) -> int:
     else:
         # Linear scale from 30 to max
         scores["commute"] = 100 - ((commute - 30) / (max_minutes - 30)) * 100
+
+    # Apply train change penalty if applicable
+    # Ideal: direct mainline train to London (0 changes)
+    # Tube/bus within London after mainline is expected and doesn't count
+    mainline_changes = area.get("mainline_changes", 0)
+    if mainline_changes > 0:
+        train_change_config = criteria["commute"].get("train_change_penalty", {})
+        penalty_per_change = train_change_config.get("penalty_per_change", 15)
+        scores["commute"] = max(0, scores["commute"] - (mainline_changes * penalty_per_change))
     
     # Nature score (20 points default)
     # Based on number of parks and countryside access
