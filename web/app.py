@@ -8,11 +8,14 @@ import os
 from datetime import datetime
 from pathlib import Path
 
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, g
 import yaml
 
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "dev-key-change-me")
+
+# Import auth middleware
+from auth_middleware import require_auth, get_current_user
 
 # Paths
 BASE_DIR = Path(__file__).parent.parent
@@ -65,6 +68,7 @@ def get_stats() -> dict:
 
 
 @app.route("/")
+@require_auth
 def index():
     """Main dashboard."""
     criteria = get_criteria()
@@ -91,6 +95,7 @@ def index():
 
 
 @app.route("/area/<name>")
+@require_auth
 def area_detail(name: str):
     """Detailed view of a single area."""
     areas = get_areas()
