@@ -341,14 +341,125 @@ def gather_nature_data(lat: float, lng: float, radius_m: int = 2000) -> dict:
 def _calculate_distance_m(lat1: float, lng1: float, lat2: float, lng2: float) -> int:
     """Calculate distance in meters between two points."""
     from math import radians, sin, cos, sqrt, atan2
-    
+
     R = 6371000  # Earth's radius in meters
-    
+
     lat1, lng1, lat2, lng2 = map(radians, [lat1, lng1, lat2, lng2])
     dlat = lat2 - lat1
     dlng = lng2 - lng1
-    
+
     a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlng/2)**2
     c = 2 * atan2(sqrt(a), sqrt(1-a))
-    
+
     return int(R * c)
+
+
+# UK Police Data API
+POLICE_API_BASE = "https://data.police.uk/api"
+
+
+def gather_crime_data(lat: float, lng: float) -> dict:
+    """
+    Gather crime statistics for an area using the UK Police Data API.
+
+    Returns dict with crime counts by category, total crimes, and crime rate.
+    Uses the most recent available month of data.
+
+    API: https://data.police.uk/docs/
+    """
+    crime_data = {
+        "total_crimes": 0,
+        "crimes_by_category": {},
+        "crime_rate_per_1000": None,  # Would need population data for this
+        "month": None,
+        "serious_crimes": 0,  # Violent/weapons/robbery
+        "property_crimes": 0,  # Burglary/theft/vehicle
+        "antisocial_behaviour": 0,
+        "api_success": False,
+        "error": None,
+    }
+
+    logger.info(f"Gathering crime data for ({lat}, {lng})")
+
+    # Serious crime categories (affect safety perception more)
+    SERIOUS_CATEGORIES = {
+        "violent-crime", "violence-and-sexual-offences",
+        "robbery", "possession-of-weapons", "public-order"
+    }
+
+    # Property crime categories
+    PROPERTY_CATEGORIES = {
+        "burglary", "theft-from-the-person", "vehicle-crime",
+        "bicycle-theft", "shoplifting", "other-theft"
+    }
+
+    def _fetch_crimes():
+        # Get crimes for all categories at this location
+        # The API returns data for a 1-mile radius by default
+        response = httpx.get(
+            f"{POLICE_API_BASE}/crimes-street/all-crime",
+            params={"lat": lat, "lng": lng},
+            timeout=30,
+        )
+        response.raise_for_status()
+        return response.json()
+
+    try:
+        crimes = _retry_with_backoff(_fetch_crimes, max_retries=3, initial_delay=2.0)
+
+        # Count crimes by category
+        category_counts = {}
+        for crime in crimes:
+            category = crime.get("category", "other-crime")
+            category_counts[category] = category_counts.get(category, 0) + 1
+
+            # Track the month (should be consistent across all crimes)
+            if not crime_data["month"] and crime.get("month"):
+                crime_data["month"] = crime["month"]
+
+        crime_data["total_crimes"] = len(crimes)
+        crime_data["crimes_by_category"] = category_counts
+
+        # Calculate serious crimes count
+        crime_data["serious_crimes"] = sum(
+            count for cat, count in category_counts.items()
+            if cat in SERIOUS_CATEGORIES
+        )
+
+        # Calculate property crimes count
+        crime_data["property_crimes"] = sum(
+            count for cat, count in category_counts.items()
+            if cat in PROPERTY_CATEGORIES
+        )
+
+        # Anti-social behaviour (often a major concern)
+        crime_data["antisocial_behaviour"] = category_counts.get("anti-social-behaviour", 0)
+
+        crime_data["api_success"] = True
+
+        logger.info(
+            f"Found {crime_data['total_crimes']} crimes in {crime_data['month']}: "
+            f"{crime_data['serious_crimes']} serious, "
+            f"{crime_data['property_crimes']} property, "
+            f"{crime_data['antisocial_behaviour']} antisocial"
+        )
+
+    except httpx.TimeoutException as e:
+        error_msg = f"Police API timeout: {e}"
+        logger.error(error_msg)
+        crime_data["error"] = error_msg
+        print(f"      ⚠️  {error_msg}")
+
+    except httpx.HTTPStatusError as e:
+        error_msg = f"Police API error (HTTP {e.response.status_code}): {e}"
+        logger.error(error_msg)
+        crime_data["error"] = error_msg
+        print(f"      ⚠️  {error_msg}")
+
+    except Exception as e:
+        error_msg = f"Failed to gather crime data: {e}"
+        logger.error(error_msg, exc_info=True)
+        crime_data["error"] = error_msg
+        print(f"      ⚠️  {error_msg}")
+
+    return crime_data

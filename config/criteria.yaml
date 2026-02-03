@@ -45,10 +45,20 @@ environment:
 # Scoring weights (must sum to 100)
 scoring:
   commute: 35
-  price: 25
-  nature: 20
+  price: 20
+  nature: 15
+  safety: 15
   amenities: 10
-  general_vibe: 10
+  general_vibe: 5
+
+# Safety/crime preferences
+safety:
+  # Crime thresholds (per month, ~1 mile radius from UK Police API)
+  excellent_threshold: 50    # Excellent if <= 50 crimes/month
+  good_threshold: 100        # Good if <= 100 crimes/month
+  acceptable_threshold: 200  # Acceptable if <= 200 crimes/month
+  # Above acceptable = lower score
+  # Serious crimes (violence, weapons, robbery) count 2x in scoring
 
 # Token management
 daily_limits:

@@ -74,7 +74,7 @@ logger = setup_logging()
 # Add parent to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from core.enrichers import gather_amenities, gather_nature_data
+from core.enrichers import gather_amenities, gather_nature_data, gather_crime_data
 from core.scorer import score_area
 from core.notifier import send_telegram_update
 
@@ -202,10 +202,34 @@ def explore_area(area: dict, dry_run: bool = False) -> dict:
             save_area_cache(area["name"], cache_data)
             logger.info(f"Saved nature data for {area['name']}")
 
+        # Gather crime statistics from UK Police API
+        print("   🚔 Gathering crime statistics...")
+        logger.info("Gathering crime data...")
+        crime = gather_crime_data(area["lat"], area["lng"])
+        cache_data["crime"] = crime
+
+        total_crimes = crime.get('total_crimes', 0)
+        serious_crimes = crime.get('serious_crimes', 0)
+        crime_month = crime.get('month', 'unknown')
+        print(f"      Found {total_crimes} crimes ({serious_crimes} serious) in {crime_month}")
+        logger.info(f"Crime result: {total_crimes} total, {serious_crimes} serious, API success: {crime.get('api_success', False)}")
+
+        # Track API warnings
+        if not crime.get("api_success"):
+            warning = f"Crime API failed: {crime.get('error', 'Unknown error')}"
+            cache_data["api_warnings"].append(warning)
+            logger.warning(warning)
+
+        # Save partial results after crime data
+        if not dry_run:
+            cache_data["exploration_status"] = "crime_complete"
+            save_area_cache(area["name"], cache_data)
+            logger.info(f"Saved crime data for {area['name']}")
+
         # Calculate score (handles empty data gracefully)
         print("   📊 Calculating score...")
         logger.info("Calculating score...")
-        score = score_area(area, amenities, nature)
+        score = score_area(area, amenities, nature, crime)
         cache_data["score"] = score
         cache_data["exploration_status"] = "complete"
         print(f"      Score: {score}/100")
@@ -252,6 +276,7 @@ def format_telegram_message(area: dict, cache: dict, progress: dict = None) -> s
     """Format the daily Telegram update message."""
     amenities = cache.get("amenities", {})
     nature = cache.get("nature", {})
+    crime = cache.get("crime", {})
 
     supermarkets = amenities.get("supermarkets", [])
     supermarket_names = ", ".join([s["name"] for s in supermarkets[:4]]) or "None found"
@@ -259,11 +284,28 @@ def format_telegram_message(area: dict, cache: dict, progress: dict = None) -> s
     parks = nature.get("parks", [])
     nature_score = min(10, len(parks) * 2) if parks else 0
 
+    # Safety rating based on crime data
+    total_crimes = crime.get("total_crimes", 0)
+    serious_crimes = crime.get("serious_crimes", 0)
+    if crime.get("api_success"):
+        if total_crimes <= 50:
+            safety_rating = "Very Low"
+        elif total_crimes <= 100:
+            safety_rating = "Low"
+        elif total_crimes <= 200:
+            safety_rating = "Moderate"
+        else:
+            safety_rating = "High"
+        crime_info = f"{total_crimes} crimes/month ({safety_rating})"
+    else:
+        crime_info = "Data unavailable"
+
     msg = f"""🏠 **Home Finder Daily Update**
 
 📍 **Area Explored:** {area['name']}
 🚂 **Commute to KX:** {area['commute_minutes']} min
 🌳 **Nature Score:** {nature_score}/10 ({len(parks)} parks nearby)
+🚔 **Crime Level:** {crime_info}
 🛒 **Supermarkets:** {supermarket_names}
 ⭐ **Overall Score:** {area['score']}/100
 

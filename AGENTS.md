@@ -36,11 +36,31 @@ This is **home-finder** — helping Chin & Reg find a rental home near London.
 
 | File | Purpose |
 |------|---------|
-| `config/criteria.yaml` | Rental requirements (budget, beds, commute) |
+| `config/criteria.yaml` | Rental requirements (budget, beds, commute, safety weights) |
 | `config/areas.yaml` | Queue of areas to explore |
 | `config/stations.json` | Cached station → KX commute times |
-| `data/cache/` | Cached amenity and scoring data |
+| `data/cache/` | Cached amenity, nature, and crime data |
 | `web/app.py` | Flask web UI |
+| `core/enrichers.py` | Data gathering (amenities, nature, crime) |
+| `core/scorer.py` | Area scoring based on criteria weights |
+
+## Crime Statistics
+
+Crime data is gathered from the UK Police Data API (data.police.uk):
+- **Free API** - no key required
+- **Coverage** - ~1 mile radius around coordinates
+- **Data** - Monthly crime counts by category
+- **Scoring** - Serious crimes weighted 2x in safety score
+
+Crime categories tracked:
+- Serious: violence, weapons, robbery, public order
+- Property: burglary, theft, vehicle crime
+- Anti-social behaviour
+
+Thresholds (configurable in criteria.yaml):
+- Excellent: ≤50 crimes/month
+- Good: ≤100 crimes/month
+- Acceptable: ≤200 crimes/month
 
 ## Telegram Integration
 

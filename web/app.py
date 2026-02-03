@@ -106,6 +106,7 @@ def area_detail(name: str):
         cache=cache,
         amenities=cache.get("amenities", {}),
         nature=cache.get("nature", {}),
+        crime=cache.get("crime", {}),
         sample_listings=cache.get("sample_listings", [])
     )
 

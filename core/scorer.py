@@ -15,14 +15,21 @@ def load_criteria() -> dict:
         return yaml.safe_load(f)
 
 
-def score_area(area: dict, amenities: dict, nature: dict) -> int:
+def score_area(area: dict, amenities: dict, nature: dict, crime: dict = None) -> int:
     """
     Calculate overall score for an area (0-100).
-    
+
     Based on weighted criteria from config.
+
+    Args:
+        area: Area info dict with commute_minutes, etc.
+        amenities: Amenities data from gather_amenities()
+        nature: Nature data from gather_nature_data()
+        crime: Crime data from gather_crime_data() (optional)
     """
     criteria = load_criteria()
     weights = criteria.get("scoring", {})
+    crime = crime or {}
     
     scores = {}
     
@@ -74,10 +81,41 @@ def score_area(area: dict, amenities: dict, nature: dict) -> int:
     # For now, assume average based on area type
     scores["price"] = 70  # Placeholder
     
-    # General vibe score (10 points default)
+    # General vibe score (5 points default)
     # Placeholder - will use AI analysis later
     scores["general_vibe"] = 70  # Placeholder
-    
+
+    # Safety score (15 points default)
+    # Based on crime statistics from UK Police API
+    safety_config = criteria.get("safety", {})
+    excellent_threshold = safety_config.get("excellent_threshold", 50)
+    good_threshold = safety_config.get("good_threshold", 100)
+    acceptable_threshold = safety_config.get("acceptable_threshold", 200)
+
+    if crime.get("api_success"):
+        # Weight serious crimes more heavily (count them 2x)
+        total_crimes = crime.get("total_crimes", 0)
+        serious_crimes = crime.get("serious_crimes", 0)
+        weighted_crimes = total_crimes + serious_crimes  # Serious counted twice
+
+        if weighted_crimes <= excellent_threshold:
+            scores["safety"] = 100
+        elif weighted_crimes <= good_threshold:
+            # Scale from 100 to 80
+            scores["safety"] = 100 - ((weighted_crimes - excellent_threshold) /
+                                       (good_threshold - excellent_threshold)) * 20
+        elif weighted_crimes <= acceptable_threshold:
+            # Scale from 80 to 50
+            scores["safety"] = 80 - ((weighted_crimes - good_threshold) /
+                                      (acceptable_threshold - good_threshold)) * 30
+        else:
+            # Scale from 50 down to 0 (cap at 2x acceptable)
+            over_threshold = weighted_crimes - acceptable_threshold
+            scores["safety"] = max(0, 50 - (over_threshold / acceptable_threshold) * 50)
+    else:
+        # No crime data available - neutral score
+        scores["safety"] = 70  # Default when data unavailable
+
     # Calculate weighted total
     total = 0
     for key, weight in weights.items():
