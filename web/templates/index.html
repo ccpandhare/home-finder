@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Finder - Chin & Reg</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>🏠 Home Finder</h1>
+        <p class="subtitle">Finding your next home near London</p>
+    </header>
+
+    <main>
+        <!-- Stats Banner -->
+        <section class="stats-banner">
+            <div class="stat">
+                <span class="stat-value">{{ stats.explored }}</span>
+                <span class="stat-label">Explored</span>
+            </div>
+            <div class="stat">
+                <span class="stat-value">{{ stats.pending }}</span>
+                <span class="stat-label">Pending</span>
+            </div>
+            <div class="stat">
+                <span class="stat-value">{{ stats.total }}</span>
+                <span class="stat-label">Total Areas</span>
+            </div>
+            <div class="stat phase">
+                <span class="stat-value">Phase {{ phase }}</span>
+                <span class="stat-label">{% if phase == 1 %}Area Discovery{% else %}Property Hunting{% endif %}</span>
+            </div>
+        </section>
+
+        <!-- Criteria Summary -->
+        <section class="criteria-card">
+            <h2>📋 Search Criteria</h2>
+            <div class="criteria-grid">
+                <div class="criteria-item">
+                    <span class="label">🚂 Max Commute</span>
+                    <span class="value">{{ criteria.commute.max_minutes }} min to King's Cross</span>
+                </div>
+                <div class="criteria-item">
+                    <span class="label">🛏️ Bedrooms</span>
+                    <span class="value">{{ criteria.property.min_bedrooms }}+</span>
+                </div>
+                <div class="criteria-item">
+                    <span class="label">💰 Budget</span>
+                    <span class="value">£{{ criteria.property.budget.guide }} - £{{ criteria.property.budget.max }} pcm</span>
+                </div>
+                <div class="criteria-item">
+                    <span class="label">🚗 Parking</span>
+                    <span class="value">{{ criteria.property.parking | capitalize }}</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Explored Areas -->
+        <section class="areas-section">
+            <h2>✅ Explored Areas</h2>
+            {% if explored %}
+            <div class="areas-grid">
+                {% for area in explored %}
+                <a href="/area/{{ area.name | urlencode }}" class="area-card explored">
+                    <div class="area-header">
+                        <h3>{{ area.name }}</h3>
+                        <span class="score">{{ area.score or '?' }}/100</span>
+                    </div>
+                    <div class="area-details">
+                        <span>🚂 {{ area.commute_minutes }} min</span>
+                        <span>📍 {{ area.station }}</span>
+                    </div>
+                    {% if area.explored_at %}
+                    <div class="area-date">Explored {{ area.explored_at }}</div>
+                    {% endif %}
+                </a>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="empty-state">No areas explored yet. Run the daily explorer to get started!</p>
+            {% endif %}
+        </section>
+
+        <!-- Pending Areas -->
+        <section class="areas-section">
+            <h2>⏳ Pending Areas</h2>
+            {% if pending %}
+            <div class="areas-list">
+                {% for area in pending[:20] %}
+                <div class="area-row pending">
+                    <span class="area-name">{{ area.name }}</span>
+                    <span class="area-station">{{ area.station }}</span>
+                    <span class="area-commute">{{ area.commute_minutes }} min</span>
+                </div>
+                {% endfor %}
+                {% if pending | length > 20 %}
+                <p class="more-areas">... and {{ pending | length - 20 }} more</p>
+                {% endif %}
+            </div>
+            {% else %}
+            <p class="empty-state">No pending areas. Run commute discovery to populate the queue!</p>
+            {% endif %}
+        </section>
+    </main>
+
+    <footer>
+        <p>Last updated: {{ last_updated }} | Move target: June 2026</p>
+    </footer>
+</body>
+</html>

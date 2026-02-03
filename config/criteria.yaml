@@ -1,0 +1,58 @@
+# Home Finder Criteria
+# Phase 1: Area discovery | Phase 2: Property hunting
+
+phase: 1  # Switch to 2 in April 2026
+
+# Move timeline
+move_in_date: "2026-06-01"
+phase_2_start: "2026-04-01"  # 2 months before move
+
+# Commute requirements
+commute:
+  destination: "King's Cross"
+  destination_coords:
+    lat: 51.5308
+    lng: -0.1238
+  max_minutes: 60
+  walking_buffer_minutes: 10  # Time to walk to station
+
+# Property requirements
+property:
+  type: rent
+  min_bedrooms: 2
+  parking: required
+  budget:
+    guide: 1250      # Ideal price
+    good: 1500       # Would pay for good place
+    max: 1750        # Absolute maximum for great place
+
+# Environment preferences
+environment:
+  nature:
+    - parks
+    - countryside
+    - green_spaces
+  amenities:
+    - supermarkets
+    - pharmacies
+
+# Scoring weights (must sum to 100)
+scoring:
+  commute: 35
+  price: 25
+  nature: 20
+  amenities: 10
+  general_vibe: 10
+
+# Token management
+daily_limits:
+  areas_per_day: 1
+  max_ai_calls: 10
+  token_reset_time: "08:00"  # GMT
+
+# Notifications
+notifications:
+  telegram:
+    enabled: true
+    # group_id configured in OpenClaw
+  daily_update_time: "09:00"  # GMT, after token reset

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ area.name }} - Home Finder</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header>
+        <a href="/" class="back-link">← Back to Dashboard</a>
+        <h1>{{ area.name }}</h1>
+        <p class="subtitle">{{ area.station }} Station</p>
+    </header>
+
+    <main>
+        <!-- Score Card -->
+        <section class="score-card">
+            <div class="big-score">
+                <span class="score-value">{{ area.score or '?' }}</span>
+                <span class="score-max">/100</span>
+            </div>
+            <div class="score-breakdown">
+                <div class="score-item">
+                    <span class="label">Commute</span>
+                    <span class="value">{{ area.commute_minutes }} min</span>
+                </div>
+                <div class="score-item">
+                    <span class="label">Status</span>
+                    <span class="value status-{{ area.status }}">{{ area.status | capitalize }}</span>
+                </div>
+                {% if area.explored_at %}
+                <div class="score-item">
+                    <span class="label">Explored</span>
+                    <span class="value">{{ area.explored_at }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </section>
+
+        <!-- Commute Details -->
+        <section class="detail-card">
+            <h2>🚂 Commute</h2>
+            <div class="detail-content">
+                <p><strong>Station:</strong> {{ area.station }}</p>
+                <p><strong>To King's Cross:</strong> {{ area.commute_minutes }} minutes</p>
+                {% if cache.commute %}
+                <p><strong>Typical trains:</strong> {{ cache.commute.trains_per_hour or '?' }} per hour</p>
+                <p><strong>First/Last train:</strong> {{ cache.commute.first_train or '?' }} / {{ cache.commute.last_train or '?' }}</p>
+                {% endif %}
+            </div>
+        </section>
+
+        <!-- Nature & Green Spaces -->
+        <section class="detail-card">
+            <h2>🌳 Nature & Green Spaces</h2>
+            {% if nature %}
+            <div class="detail-content">
+                <p><strong>Parks within 1km:</strong> {{ nature.parks_count or 0 }}</p>
+                <ul class="amenity-list">
+                    {% for park in nature.parks or [] %}
+                    <li>{{ park.name }} ({{ park.distance_m }}m)</li>
+                    {% endfor %}
+                </ul>
+                {% if nature.countryside_access %}
+                <p class="highlight">✓ Good countryside access nearby</p>
+                {% endif %}
+            </div>
+            {% else %}
+            <p class="empty-state">Nature data not yet collected</p>
+            {% endif %}
+        </section>
+
+        <!-- Amenities -->
+        <section class="detail-card">
+            <h2>🛒 Amenities</h2>
+            {% if amenities %}
+            <div class="detail-content">
+                <h4>Supermarkets</h4>
+                <ul class="amenity-list">
+                    {% for shop in amenities.supermarkets or [] %}
+                    <li>{{ shop.name }} ({{ shop.distance_m }}m)</li>
+                    {% endfor %}
+                </ul>
+                
+                {% if amenities.pharmacies %}
+                <h4>Pharmacies</h4>
+                <ul class="amenity-list">
+                    {% for pharm in amenities.pharmacies or [] %}
+                    <li>{{ pharm.name }} ({{ pharm.distance_m }}m)</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+            {% else %}
+            <p class="empty-state">Amenity data not yet collected</p>
+            {% endif %}
+        </section>
+
+        <!-- Sample Listings (Phase 2 preview) -->
+        {% if sample_listings %}
+        <section class="detail-card">
+            <h2>🏠 Sample Listings</h2>
+            <div class="listings-grid">
+                {% for listing in sample_listings[:5] %}
+                <div class="listing-card">
+                    <div class="listing-price">£{{ listing.price }} pcm</div>
+                    <div class="listing-details">
+                        {{ listing.bedrooms }} bed | {{ listing.type }}
+                    </div>
+                    <a href="{{ listing.url }}" target="_blank" class="listing-link">View →</a>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- Notes -->
+        {% if cache.notes %}
+        <section class="detail-card">
+            <h2>📝 Notes</h2>
+            <div class="notes-content">
+                {{ cache.notes }}
+            </div>
+        </section>
+        {% endif %}
+    </main>
+
+    <footer>
+        <a href="/">← Back to Dashboard</a>
+    </footer>
+</body>
+</html>
