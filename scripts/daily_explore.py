@@ -110,17 +110,17 @@ def explore_area(area: dict, dry_run: bool = False) -> dict:
     }
 
 
-def format_telegram_message(area: dict, cache: dict) -> str:
+def format_telegram_message(area: dict, cache: dict, progress: dict = None) -> str:
     """Format the daily Telegram update message."""
     amenities = cache.get("amenities", {})
     nature = cache.get("nature", {})
-    
+
     supermarkets = amenities.get("supermarkets", [])
     supermarket_names = ", ".join([s["name"] for s in supermarkets[:4]]) or "None found"
-    
+
     parks = nature.get("parks", [])
     nature_score = min(10, len(parks) * 2) if parks else 0
-    
+
     msg = f"""🏠 **Home Finder Daily Update**
 
 📍 **Area Explored:** {area['name']}
@@ -130,7 +130,7 @@ def format_telegram_message(area: dict, cache: dict) -> str:
 ⭐ **Overall Score:** {area['score']}/100
 
 """
-    
+
     # Add a verdict
     if area['score'] >= 80:
         msg += "**Verdict:** 🌟 Excellent area! Worth prioritizing."
@@ -140,7 +140,11 @@ def format_telegram_message(area: dict, cache: dict) -> str:
         msg += "**Verdict:** 🤔 Decent, but has some drawbacks."
     else:
         msg += "**Verdict:** ⚠️ May not meet your criteria."
-    
+
+    # Add progress if provided
+    if progress:
+        msg += f"\n\n**Progress:** {progress['explored']}/{progress['total']} areas explored"
+
     return msg
 
 
@@ -190,21 +194,32 @@ def main():
         save_areas(areas_data)
         print(f"\n✅ Area status updated")
         
+        # Calculate stats for notification
+        explored = len([a for a in areas_data["areas"] if a["status"] == "explored"])
+        total = len(areas_data["areas"])
+
         # Send notification
         if not args.no_notify:
             cache = json.loads(
                 (CACHE_DIR / f"area_{updated_area['name'].lower().replace(' ', '_')}.json").read_text()
             )
-            message = format_telegram_message(updated_area, cache)
-            
+            progress = {"explored": explored, "total": total}
+            message = format_telegram_message(updated_area, cache, progress)
+
             print("\n📱 Sending Telegram update...")
-            send_telegram_update(message)
-            print("✅ Notification sent!")
-    
-    # Print stats
-    explored = len([a for a in areas_data["areas"] if a["status"] == "explored"])
-    total = len(areas_data["areas"])
-    print(f"\n📊 Progress: {explored}/{total} areas explored")
+            try:
+                send_telegram_update(message)
+                print("✅ Notification sent!")
+            except Exception as e:
+                print(f"⚠️ Notification failed: {e}")
+                print("   (Continuing anyway - logs saved)")
+
+        print(f"\n📊 Progress: {explored}/{total} areas explored")
+    else:
+        # Print stats for dry run
+        explored = len([a for a in areas_data["areas"] if a["status"] == "explored"])
+        total = len(areas_data["areas"])
+        print(f"\n📊 Progress: {explored}/{total} areas explored")
 
 
 if __name__ == "__main__":
