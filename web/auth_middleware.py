@@ -57,10 +57,12 @@ def require_auth(f):
 
 def redirect_to_login():
     """Redirect to auth service login page."""
+    from urllib.parse import quote
     current_url = request.url
-    return redirect(
-        f"{AUTH_SERVICE}/login?service={SERVICE_NAME}&redirect={current_url}"
-    )
+    encoded_redirect = quote(current_url, safe='')
+    login_url = f"{AUTH_SERVICE}/login?service={SERVICE_NAME}&redirect={encoded_redirect}"
+    print(f"[AUTH] Redirecting to: {login_url}")
+    return redirect(login_url)
 
 
 def get_current_user():

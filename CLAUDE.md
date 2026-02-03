@@ -80,11 +80,32 @@ The daily script should:
 - Config files: `snake_case.yaml`
 - Cache files: `{type}_{identifier}.json` (e.g., `commute_hitchin.json`)
 
-## API Keys Needed
+## API Keys & Usage
 
-- **TravelTime API** or **Google Maps** — for commute calculations
-- **Telegram Bot** — for daily updates (configure in OpenClaw)
-- Optional: Google Places API for amenity enrichment
+### Google Maps (Primary - $300 free credit)
+**Allowed APIs:**
+- ✅ **Directions API** — commute times (train/transit to King's Cross)
+- ✅ **Places API** — supermarkets, parks, amenities lookup
+- ✅ **Geocoding API** — postcode ↔ coordinates
+
+**NOT allowed (use free alternatives):**
+- ❌ Maps JavaScript API — use Leaflet + OpenStreetMap for map rendering
+- ❌ Distance Matrix API — use Directions API instead (more control)
+
+**Cost management:**
+- Cache ALL results aggressively (station times are stable)
+- Limit to ~1 area exploration per day
+- Batch API calls where possible
+
+### Free Alternatives (prefer these when possible)
+- **OpenStreetMap Overpass API** — parks, amenities, green spaces (FREE, unlimited)
+- **postcodes.io** — UK postcode geocoding (FREE)
+- **Leaflet + OSM tiles** — map rendering (FREE)
+- **National Rail open data** — station locations (FREE)
+
+### Telegram Bot
+- For daily updates (configure in OpenClaw)
+- Group notifications for Chin & Reg
 
 ## Commands
 

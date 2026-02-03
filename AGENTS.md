@@ -18,6 +18,8 @@ This is **home-finder** — helping Chin & Reg find a rental home near London.
 ### Do
 - Keep token usage in mind — expensive AI calls should be batched/limited
 - Cache aggressively — commute times and amenities don't change often
+- **Prefer free APIs** — use OSM/Overpass for amenities, postcodes.io for geocoding
+- **Use Google APIs sparingly** — only Directions, Places, Geocoding allowed
 - Make the web UI simple and glanceable — Reg needs to check progress easily
 - Test scrapers carefully — sites may block or change structure
 - Log everything — debugging scraper issues needs good logs
@@ -27,6 +29,8 @@ This is **home-finder** — helping Chin & Reg find a rental home near London.
 - Don't process more than 1-2 areas per day (token budget)
 - Don't ignore rate limits — we're guests on these sites
 - Don't hardcode criteria — everything should come from config/criteria.yaml
+- Don't use Google Maps for map rendering — use Leaflet + OSM (free)
+- Don't use Distance Matrix API — use Directions API instead
 
 ## Key Files
 
