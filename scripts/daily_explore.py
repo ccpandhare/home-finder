@@ -7,6 +7,12 @@ Usage:
     python scripts/daily_explore.py
     python scripts/daily_explore.py --area "St Albans"  # Explore specific area
     python scripts/daily_explore.py --dry-run           # Don't save or notify
+
+Features:
+- Robust API calls with retries and exponential backoff
+- Partial result saving if script fails mid-way
+- Comprehensive logging with timestamps to file and console
+- Graceful handling of edge cases (no parks, API timeout, etc.)
 """
 
 import argparse
@@ -18,12 +24,52 @@ from pathlib import Path
 
 import yaml
 
+# Paths (defined early for logging setup)
+BASE_DIR = Path(__file__).parent.parent
+LOGS_DIR = BASE_DIR / "data" / "logs"
+
+
+def setup_logging(log_to_file: bool = True) -> logging.Logger:
+    """
+    Set up logging with both console and file handlers.
+
+    Args:
+        log_to_file: If True, also log to daily log file
+
+    Returns:
+        Configured logger
+    """
+    logger = logging.getLogger("daily_explore")
+    logger.setLevel(logging.DEBUG)
+
+    # Clear any existing handlers
+    logger.handlers.clear()
+
+    # Console handler (INFO level)
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(logging.INFO)
+    console_format = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+    console_handler.setFormatter(console_format)
+    logger.addHandler(console_handler)
+
+    # File handler (DEBUG level for more detail)
+    if log_to_file:
+        LOGS_DIR.mkdir(parents=True, exist_ok=True)
+        log_file = LOGS_DIR / f"daily_explore_{datetime.now().strftime('%Y%m%d')}.log"
+        file_handler = logging.FileHandler(log_file)
+        file_handler.setLevel(logging.DEBUG)
+        file_format = logging.Formatter(
+            '%(asctime)s - %(name)s - %(levelname)s - %(funcName)s:%(lineno)d - %(message)s'
+        )
+        file_handler.setFormatter(file_format)
+        logger.addHandler(file_handler)
+        logger.debug(f"Logging to file: {log_file}")
+
+    return logger
+
+
 # Set up logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
+logger = setup_logging()
 
 # Add parent to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -32,8 +78,7 @@ from core.enrichers import gather_amenities, gather_nature_data
 from core.scorer import score_area
 from core.notifier import send_telegram_update
 
-# Paths
-BASE_DIR = Path(__file__).parent.parent
+# Paths (BASE_DIR already defined above for logging)
 CONFIG_DIR = BASE_DIR / "config"
 CACHE_DIR = BASE_DIR / "data" / "cache"
 
@@ -76,17 +121,27 @@ def explore_area(area: dict, dry_run: bool = False) -> dict:
     Explore an area and gather all relevant data.
 
     Returns enriched area data with score.
+
+    Handles edge cases:
+    - API failures: Continues with partial data, score may be lower
+    - No parks found: Valid result, area scores lower on nature
+    - No supermarkets: Valid result, area scores lower on amenities
     """
     logger.info(f"Starting exploration for: {area['name']}")
+    logger.debug(f"Area details: {json.dumps(area, indent=2)}")
     print(f"\n🔍 Exploring: {area['name']}")
     print(f"   Station: {area['station']}")
     print(f"   Commute: {area['commute_minutes']} min to King's Cross")
+    print(f"   Coordinates: ({area['lat']}, {area['lng']})")
 
     cache_data = {
         "explored_at": datetime.now().isoformat(),
         "station": area["station"],
         "commute_minutes": area["commute_minutes"],
+        "lat": area["lat"],
+        "lng": area["lng"],
         "exploration_status": "in_progress",
+        "api_warnings": [],
     }
 
     # Save initial partial cache
@@ -100,7 +155,20 @@ def explore_area(area: dict, dry_run: bool = False) -> dict:
         logger.info("Gathering amenities...")
         amenities = gather_amenities(area["lat"], area["lng"])
         cache_data["amenities"] = amenities
-        print(f"      Found {len(amenities.get('supermarkets', []))} supermarkets")
+
+        supermarket_count = len(amenities.get('supermarkets', []))
+        print(f"      Found {supermarket_count} supermarkets/convenience stores")
+        logger.info(f"Amenities result: {supermarket_count} supermarkets, API success: {amenities.get('api_success', False)}")
+
+        # Track API warnings
+        if not amenities.get("api_success"):
+            warning = f"Amenities API failed: {amenities.get('error', 'Unknown error')}"
+            cache_data["api_warnings"].append(warning)
+            logger.warning(warning)
+        elif supermarket_count == 0:
+            warning = "No supermarkets found in area"
+            cache_data["api_warnings"].append(warning)
+            logger.warning(warning)
 
         # Save partial results after amenities
         if not dry_run:
@@ -113,7 +181,20 @@ def explore_area(area: dict, dry_run: bool = False) -> dict:
         logger.info("Gathering nature data...")
         nature = gather_nature_data(area["lat"], area["lng"])
         cache_data["nature"] = nature
-        print(f"      Found {nature.get('parks_count', 0)} parks")
+
+        parks_count = nature.get('parks_count', 0)
+        print(f"      Found {parks_count} parks")
+        logger.info(f"Nature result: {parks_count} parks, API success: {nature.get('api_success', False)}")
+
+        # Track API warnings
+        if not nature.get("api_success"):
+            warning = f"Nature API failed: {nature.get('error', 'Unknown error')}"
+            cache_data["api_warnings"].append(warning)
+            logger.warning(warning)
+        elif parks_count == 0:
+            warning = "No parks found in area"
+            cache_data["api_warnings"].append(warning)
+            logger.warning(warning)
 
         # Save partial results after nature data
         if not dry_run:
@@ -121,13 +202,20 @@ def explore_area(area: dict, dry_run: bool = False) -> dict:
             save_area_cache(area["name"], cache_data)
             logger.info(f"Saved nature data for {area['name']}")
 
-        # Calculate score
+        # Calculate score (handles empty data gracefully)
         print("   📊 Calculating score...")
         logger.info("Calculating score...")
         score = score_area(area, amenities, nature)
         cache_data["score"] = score
         cache_data["exploration_status"] = "complete"
         print(f"      Score: {score}/100")
+        logger.info(f"Final score for {area['name']}: {score}/100")
+
+        # Log any warnings
+        if cache_data["api_warnings"]:
+            print(f"   ⚠️  {len(cache_data['api_warnings'])} warning(s) during exploration")
+            for warning in cache_data["api_warnings"]:
+                logger.warning(f"  - {warning}")
 
         if not dry_run:
             # Save final cache
@@ -135,7 +223,7 @@ def explore_area(area: dict, dry_run: bool = False) -> dict:
             logger.info(f"Saved final cache for {area['name']}")
             print(f"   💾 Cached data saved")
 
-        logger.info(f"Successfully completed exploration for {area['name']}")
+        logger.info(f"Successfully completed exploration for {area['name']} with score {score}")
 
         return {
             **area,
@@ -152,6 +240,7 @@ def explore_area(area: dict, dry_run: bool = False) -> dict:
         if not dry_run:
             cache_data["exploration_status"] = "failed"
             cache_data["error"] = str(e)
+            cache_data["error_type"] = type(e).__name__
             save_area_cache(area["name"], cache_data)
             logger.info(f"Saved partial cache with error for {area['name']}")
 

@@ -84,6 +84,46 @@ When modifying the map:
 - Popup content includes link to area detail page
 - Markers auto-fit to show all areas on initial load
 
+## Daily Exploration Script
+
+The `scripts/daily_explore.py` handles automated area exploration via cron job.
+
+### Features
+- **Retry with backoff:** API calls retry 3 times with exponential backoff (2s, 4s, 8s)
+- **Endpoint fallback:** Uses multiple Overpass API endpoints if one fails
+- **Partial saves:** Cache is saved after each step (amenities, nature) so failures don't lose data
+- **Comprehensive logging:** Logs to console (INFO) and file (DEBUG) in `data/logs/`
+
+### Running Manually
+```bash
+# Explore next pending area
+python scripts/daily_explore.py
+
+# Explore specific area
+python scripts/daily_explore.py --area "Cambridge"
+
+# Test without saving (dry run)
+python scripts/daily_explore.py --dry-run
+
+# Skip Telegram notification
+python scripts/daily_explore.py --no-notify
+```
+
+### Cron Job
+Set up via OpenClaw to run daily at 9am GMT:
+```bash
+openclaw cron list  # View scheduled jobs
+```
+
+### Log Files
+- `data/logs/daily_explore_YYYYMMDD.log` — Daily log files with detailed DEBUG info
+- Cache files: `data/cache/area_<name>.json` — Contains amenities, nature, score
+
+### Troubleshooting
+- If Overpass API returns 504, check if overpass-api.de is under heavy load
+- Script automatically falls back to `overpass.kumi.systems` as backup endpoint
+- Check `exploration_status` in cache files: `in_progress`, `amenities_complete`, `nature_complete`, `complete`, or `failed`
+
 ## Development Tips
 
 - Run `python -m pytest tests/` before committing

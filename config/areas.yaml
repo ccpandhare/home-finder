@@ -5,9 +5,9 @@ areas:
   train_minutes: 25
   lat: 51.7504966
   lng: -0.3276687
-  status: pending
-  explored_at: null
-  score: null
+  status: explored
+  explored_at: '2026-02-03'
+  score: 84
 - name: Welwyn North
   station: Welwyn North
   commute_minutes: 35
