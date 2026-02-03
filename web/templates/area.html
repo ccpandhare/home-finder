@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ area.name }} - Home Finder</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
@@ -38,36 +39,122 @@
             </div>
         </section>
 
+        <!-- Area Map -->
+        {% if area.lat and area.lng %}
+        <section class="detail-card map-card">
+            <div class="section-header">
+                <h2>📍 Area Map</h2>
+                <div class="map-legend">
+                    <div class="legend-item"><span class="legend-marker legend-station"></span> Station</div>
+                    <div class="legend-item"><span class="legend-marker legend-park"></span> Park/Garden</div>
+                    <div class="legend-item"><span class="legend-marker legend-shop"></span> Supermarket</div>
+                </div>
+            </div>
+            <div id="area-map" class="area-detail-map"></div>
+        </section>
+        {% endif %}
+
         <!-- Commute Details -->
         <section class="detail-card">
             <h2>🚂 Commute</h2>
             <div class="detail-content">
-                <p><strong>Station:</strong> {{ area.station }}</p>
-                <p><strong>To King's Cross:</strong> {{ area.commute_minutes }} minutes</p>
-                {% if cache.commute %}
-                <p><strong>Typical trains:</strong> {{ cache.commute.trains_per_hour or '?' }} per hour</p>
-                <p><strong>First/Last train:</strong> {{ cache.commute.first_train or '?' }} / {{ cache.commute.last_train or '?' }}</p>
-                {% endif %}
+                <div class="commute-info-grid">
+                    <div class="commute-info-item">
+                        <span class="commute-label">Station</span>
+                        <span class="commute-value">{{ area.station }}</span>
+                    </div>
+                    <div class="commute-info-item">
+                        <span class="commute-label">To King's Cross</span>
+                        <span class="commute-value commute-highlight">{{ area.commute_minutes }} min</span>
+                    </div>
+                    {% if area.train_minutes %}
+                    <div class="commute-info-item">
+                        <span class="commute-label">Train Time</span>
+                        <span class="commute-value">{{ area.train_minutes }} min</span>
+                    </div>
+                    {% endif %}
+                    {% if cache.commute and cache.commute.trains_per_hour %}
+                    <div class="commute-info-item">
+                        <span class="commute-label">Trains/Hour</span>
+                        <span class="commute-value">{{ cache.commute.trains_per_hour }}</span>
+                    </div>
+                    {% endif %}
+                    {% if cache.commute and cache.commute.first_train %}
+                    <div class="commute-info-item">
+                        <span class="commute-label">First Train</span>
+                        <span class="commute-value">{{ cache.commute.first_train }}</span>
+                    </div>
+                    {% endif %}
+                    {% if cache.commute and cache.commute.last_train %}
+                    <div class="commute-info-item">
+                        <span class="commute-label">Last Train</span>
+                        <span class="commute-value">{{ cache.commute.last_train }}</span>
+                    </div>
+                    {% endif %}
+                </div>
             </div>
         </section>
 
-        <!-- Nature & Green Spaces -->
+        <!-- Nature Score Breakdown -->
         <section class="detail-card">
             <h2>🌳 Nature & Green Spaces</h2>
             {% if nature %}
             <div class="detail-content">
-                <p><strong>Parks within 1km:</strong> {{ nature.parks_count or 0 }}</p>
-                <ul class="amenity-list">
-                    {% for park in nature.parks or [] %}
-                    <li>{{ park.name }} ({{ park.distance_m }}m)</li>
+                <!-- Nature Score Breakdown -->
+                <div class="score-breakdown-grid">
+                    <div class="score-breakdown-item">
+                        <span class="breakdown-value">{{ nature.parks | length if nature.parks else 0 }}</span>
+                        <span class="breakdown-label">Parks & Gardens</span>
+                    </div>
+                    <div class="score-breakdown-item">
+                        <span class="breakdown-value">{{ nature.nature_reserves | length if nature.nature_reserves else 0 }}</span>
+                        <span class="breakdown-label">Nature Reserves</span>
+                    </div>
+                    <div class="score-breakdown-item {% if nature.countryside_access %}breakdown-highlight{% endif %}">
+                        <span class="breakdown-value">{% if nature.countryside_access %}✓{% else %}✗{% endif %}</span>
+                        <span class="breakdown-label">Countryside Access</span>
+                    </div>
+                </div>
+
+                {% if nature.parks %}
+                <h4 class="amenity-section-title">🏞️ Parks & Gardens</h4>
+                <div class="amenity-cards">
+                    {% for park in nature.parks[:8] %}
+                    <div class="amenity-card park-card">
+                        <span class="amenity-name">{{ park.name }}</span>
+                        <span class="amenity-distance">{{ park.distance_m }}m away</span>
+                        {% if park.type %}
+                        <span class="amenity-type">{{ park.type | capitalize }}</span>
+                        {% endif %}
+                    </div>
                     {% endfor %}
-                </ul>
+                    {% if nature.parks | length > 8 %}
+                    <div class="amenity-more">+{{ nature.parks | length - 8 }} more parks</div>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                {% if nature.nature_reserves %}
+                <h4 class="amenity-section-title">🌲 Nature Reserves & Woods</h4>
+                <div class="amenity-cards">
+                    {% for reserve in nature.nature_reserves[:4] %}
+                    <div class="amenity-card reserve-card">
+                        <span class="amenity-name">{{ reserve.name }}</span>
+                        <span class="amenity-distance">{{ reserve.distance_m }}m away</span>
+                        {% if reserve.type %}
+                        <span class="amenity-type">{{ reserve.type | replace('_', ' ') | capitalize }}</span>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
                 {% if nature.countryside_access %}
-                <p class="highlight">✓ Good countryside access nearby</p>
+                <p class="highlight">✓ Good countryside access nearby - great for walks and nature!</p>
                 {% endif %}
             </div>
             {% else %}
-            <p class="empty-state">Nature data not yet collected</p>
+            <p class="empty-state">Nature data not yet collected. This area will be explored soon!</p>
             {% endif %}
         </section>
 
@@ -76,31 +163,47 @@
             <h2>🛒 Amenities</h2>
             {% if amenities %}
             <div class="detail-content">
-                <h4>Supermarkets</h4>
-                <ul class="amenity-list">
-                    {% for shop in amenities.supermarkets or [] %}
-                    <li>{{ shop.name }} ({{ shop.distance_m }}m)</li>
+                <!-- Supermarkets -->
+                {% if amenities.supermarkets %}
+                <h4 class="amenity-section-title">🛍️ Supermarkets & Shops ({{ amenities.supermarkets | length }})</h4>
+                <div class="amenity-cards">
+                    {% for shop in amenities.supermarkets[:10] %}
+                    <div class="amenity-card shop-card">
+                        <span class="amenity-name">{{ shop.name }}</span>
+                        <span class="amenity-distance">{{ shop.distance_m }}m away</span>
+                        {% if shop.type %}
+                        <span class="amenity-type">{{ shop.type | capitalize }}</span>
+                        {% endif %}
+                    </div>
                     {% endfor %}
-                </ul>
-                
+                    {% if amenities.supermarkets | length > 10 %}
+                    <div class="amenity-more">+{{ amenities.supermarkets | length - 10 }} more shops</div>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <!-- Pharmacies -->
                 {% if amenities.pharmacies %}
-                <h4>Pharmacies</h4>
-                <ul class="amenity-list">
-                    {% for pharm in amenities.pharmacies or [] %}
-                    <li>{{ pharm.name }} ({{ pharm.distance_m }}m)</li>
+                <h4 class="amenity-section-title">💊 Pharmacies ({{ amenities.pharmacies | length }})</h4>
+                <div class="amenity-cards">
+                    {% for pharm in amenities.pharmacies[:6] %}
+                    <div class="amenity-card pharmacy-card">
+                        <span class="amenity-name">{{ pharm.name }}</span>
+                        <span class="amenity-distance">{{ pharm.distance_m }}m away</span>
+                    </div>
                     {% endfor %}
-                </ul>
+                </div>
                 {% endif %}
             </div>
             {% else %}
-            <p class="empty-state">Amenity data not yet collected</p>
+            <p class="empty-state">Amenity data not yet collected. This area will be explored soon!</p>
             {% endif %}
         </section>
 
-        <!-- Sample Listings (Phase 2 preview) -->
-        {% if sample_listings %}
+        <!-- Sample Listings -->
         <section class="detail-card">
             <h2>🏠 Sample Listings</h2>
+            {% if sample_listings %}
             <div class="listings-grid">
                 {% for listing in sample_listings[:5] %}
                 <div class="listing-card">
@@ -112,8 +215,21 @@
                 </div>
                 {% endfor %}
             </div>
+            {% else %}
+            <div class="listings-placeholder">
+                <p class="empty-state">Sample listings coming soon!</p>
+                <p class="listing-note">Once this area is fully explored, we'll show sample rental listings to give you an idea of prices in the area.</p>
+                <div class="external-links">
+                    <a href="https://www.rightmove.co.uk/property-to-rent/search.html?searchLocation={{ area.name | urlencode }}" target="_blank" class="external-link">
+                        🔍 Search on Rightmove
+                    </a>
+                    <a href="https://www.zoopla.co.uk/to-rent/property/{{ area.name | lower | replace(' ', '-') }}/" target="_blank" class="external-link">
+                        🔍 Search on Zoopla
+                    </a>
+                </div>
+            </div>
+            {% endif %}
         </section>
-        {% endif %}
 
         <!-- Notes -->
         {% if cache.notes %}
@@ -129,5 +245,79 @@
     <footer>
         <a href="/">← Back to Dashboard</a>
     </footer>
+
+    <!-- Leaflet JS for map -->
+    {% if area.lat and area.lng %}
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // Initialize map centered on area
+        const areaLat = {{ area.lat }};
+        const areaLng = {{ area.lng }};
+        const areaName = "{{ area.name }}";
+        const stationName = "{{ area.station }}";
+
+        const map = L.map('area-map').setView([areaLat, areaLng], 14);
+
+        // Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Station marker (red)
+        const stationIcon = L.divIcon({
+            className: 'custom-marker',
+            html: '<div class="marker-inner station-marker">🚉</div>',
+            iconSize: [32, 32],
+            iconAnchor: [16, 16]
+        });
+        L.marker([areaLat, areaLng], { icon: stationIcon })
+            .addTo(map)
+            .bindPopup('<strong>' + stationName + ' Station</strong><br>📍 Center of search area');
+
+        // Parks/gardens (green markers)
+        {% if nature and nature.parks %}
+        const parkIcon = L.divIcon({
+            className: 'custom-marker',
+            html: '<div class="marker-inner park-marker">🌳</div>',
+            iconSize: [24, 24],
+            iconAnchor: [12, 12]
+        });
+        {% for park in nature.parks[:12] %}
+        {% if park.lat and park.lng %}
+        L.marker([{{ park.lat }}, {{ park.lng }}], { icon: parkIcon })
+            .addTo(map)
+            .bindPopup('<strong>{{ park.name | e }}</strong><br>{{ park.distance_m }}m from station<br>{{ park.type | default("Park") | capitalize }}');
+        {% endif %}
+        {% endfor %}
+        {% endif %}
+
+        // Supermarkets (blue markers)
+        {% if amenities and amenities.supermarkets %}
+        const shopIcon = L.divIcon({
+            className: 'custom-marker',
+            html: '<div class="marker-inner shop-marker">🛒</div>',
+            iconSize: [24, 24],
+            iconAnchor: [12, 12]
+        });
+        {% for shop in amenities.supermarkets[:12] %}
+        {% if shop.lat and shop.lng %}
+        L.marker([{{ shop.lat }}, {{ shop.lng }}], { icon: shopIcon })
+            .addTo(map)
+            .bindPopup('<strong>{{ shop.name | e }}</strong><br>{{ shop.distance_m }}m from station<br>{{ shop.type | default("Supermarket") | capitalize }}');
+        {% endif %}
+        {% endfor %}
+        {% endif %}
+
+        // Add a 1km radius circle around station
+        L.circle([areaLat, areaLng], {
+            color: '#2563eb',
+            fillColor: '#2563eb',
+            fillOpacity: 0.05,
+            radius: 1000,
+            weight: 1,
+            dashArray: '5, 5'
+        }).addTo(map).bindPopup('1km radius from station');
+    </script>
+    {% endif %}
 </body>
 </html>
