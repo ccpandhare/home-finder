@@ -1,418 +1,4 @@
 areas:
-- name: London
-  station: London King's Cross
-  commute_minutes: 13
-  train_minutes: 3
-  lat: 51.5323954
-  lng: -0.1230224
-  status: pending
-  explored_at: null
-  score: null
-- name: London St. Pancras International
-  station: London St. Pancras International
-  commute_minutes: 15
-  train_minutes: 5
-  lat: 51.5327196
-  lng: -0.1270027
-  status: pending
-  explored_at: null
-  score: null
-- name: St Pancras International
-  station: St Pancras International
-  commute_minutes: 15
-  train_minutes: 5
-  lat: 51.5322106
-  lng: -0.1276185
-  status: pending
-  explored_at: null
-  score: null
-- name: London
-  station: Farringdon
-  commute_minutes: 17
-  train_minutes: 7
-  lat: 51.519964
-  lng: -0.104555
-  status: pending
-  explored_at: null
-  score: null
-- name: London
-  station: Highbury & Islington
-  commute_minutes: 18
-  train_minutes: 8
-  lat: 51.5463679
-  lng: -0.1036544
-  status: pending
-  explored_at: null
-  score: null
-- name: Kentish Town
-  station: Kentish Town
-  commute_minutes: 18
-  train_minutes: 8
-  lat: 51.5501727
-  lng: -0.1388654
-  status: pending
-  explored_at: null
-  score: null
-- name: London Euston
-  station: London Euston
-  commute_minutes: 19
-  train_minutes: 9
-  lat: 51.5288526
-  lng: -0.1341909
-  status: pending
-  explored_at: null
-  score: null
-- name: London
-  station: Old Street
-  commute_minutes: 20
-  train_minutes: 10
-  lat: 51.5256284
-  lng: -0.0876094
-  status: pending
-  explored_at: null
-  score: null
-- name: Finsbury Park
-  station: Finsbury Park
-  commute_minutes: 20
-  train_minutes: 10
-  lat: 51.5648345
-  lng: -0.1064144
-  status: pending
-  explored_at: null
-  score: null
-- name: Moorgate
-  station: Moorgate
-  commute_minutes: 21
-  train_minutes: 11
-  lat: 51.5182516
-  lng: -0.0890625
-  status: pending
-  explored_at: null
-  score: null
-- name: Stratford International
-  station: Stratford International
-  commute_minutes: 23
-  train_minutes: 13
-  lat: 51.5447954
-  lng: -0.0087494
-  status: pending
-  explored_at: null
-  score: null
-- name: Essex Road
-  station: Essex Road
-  commute_minutes: 24
-  train_minutes: 14
-  lat: 51.5407328
-  lng: -0.0961859
-  status: pending
-  explored_at: null
-  score: null
-- name: London
-  station: City Thameslink
-  commute_minutes: 25
-  train_minutes: 15
-  lat: 51.515126
-  lng: -0.103564
-  status: pending
-  explored_at: null
-  score: null
-- name: London Liverpool Street
-  station: London Liverpool Street
-  commute_minutes: 25
-  train_minutes: 15
-  lat: 51.5182105
-  lng: -0.0814269
-  status: pending
-  explored_at: null
-  score: null
-- name: London Cannon Street
-  station: London Cannon Street
-  commute_minutes: 26
-  train_minutes: 16
-  lat: 51.5106685
-  lng: -0.0906046
-  status: pending
-  explored_at: null
-  score: null
-- name: London
-  station: Camden Road
-  commute_minutes: 26
-  train_minutes: 16
-  lat: 51.5419498
-  lng: -0.1395276
-  status: pending
-  explored_at: null
-  score: null
-- name: West Hampstead Thameslink
-  station: West Hampstead Thameslink
-  commute_minutes: 26
-  train_minutes: 16
-  lat: 51.5484242
-  lng: -0.192322
-  status: pending
-  explored_at: null
-  score: null
-- name: Cricklewood
-  station: Cricklewood
-  commute_minutes: 26
-  train_minutes: 16
-  lat: 51.5587554
-  lng: -0.2129746
-  status: pending
-  explored_at: null
-  score: null
-- name: Seven Sisters
-  station: Seven Sisters
-  commute_minutes: 26
-  train_minutes: 16
-  lat: 51.5824738
-  lng: -0.0749325
-  status: pending
-  explored_at: null
-  score: null
-- name: London
-  station: Vauxhall
-  commute_minutes: 27
-  train_minutes: 17
-  lat: 51.4858478
-  lng: -0.1227502
-  status: pending
-  explored_at: null
-  score: null
-- name: Elephant & Castle
-  station: Elephant & Castle
-  commute_minutes: 27
-  train_minutes: 17
-  lat: 51.4940431
-  lng: -0.0987169
-  status: pending
-  explored_at: null
-  score: null
-- name: London
-  station: London Marylebone
-  commute_minutes: 27
-  train_minutes: 17
-  lat: 51.5243712
-  lng: -0.163592
-  status: pending
-  explored_at: null
-  score: null
-- name: Tottenham Hale
-  station: Tottenham Hale
-  commute_minutes: 27
-  train_minutes: 17
-  lat: 51.588123
-  lng: -0.0599442
-  status: pending
-  explored_at: null
-  score: null
-- name: London
-  station: London Bridge
-  commute_minutes: 28
-  train_minutes: 18
-  lat: 51.5048764
-  lng: -0.0851473
-  status: pending
-  explored_at: null
-  score: null
-- name: London Fenchurch Street
-  station: London Fenchurch Street
-  commute_minutes: 28
-  train_minutes: 18
-  lat: 51.5113281
-  lng: -0.0774191
-  status: pending
-  explored_at: null
-  score: null
-- name: London
-  station: London Blackfriars
-  commute_minutes: 29
-  train_minutes: 19
-  lat: 51.5104871
-  lng: -0.1032417
-  status: pending
-  explored_at: null
-  score: null
-- name: London Victoria
-  station: London Victoria
-  commute_minutes: 29
-  train_minutes: 19
-  lat: 51.4947328
-  lng: -0.1445802
-  status: pending
-  explored_at: null
-  score: null
-- name: London
-  station: Drayton Park
-  commute_minutes: 29
-  train_minutes: 19
-  lat: 51.5531063
-  lng: -0.1057696
-  status: pending
-  explored_at: null
-  score: null
-- name: London Waterloo
-  station: London Waterloo
-  commute_minutes: 30
-  train_minutes: 20
-  lat: 51.5028379
-  lng: -0.112801
-  status: pending
-  explored_at: null
-  score: null
-- name: London
-  station: London Paddington
-  commute_minutes: 30
-  train_minutes: 20
-  lat: 51.5170952
-  lng: -0.177317
-  status: pending
-  explored_at: null
-  score: null
-- name: London
-  station: Charing Cross
-  commute_minutes: 31
-  train_minutes: 21
-  lat: 51.5074975
-  lng: -0.1236888
-  status: pending
-  explored_at: null
-  score: null
-- name: Loughborough Junction
-  station: Loughborough Junction
-  commute_minutes: 31
-  train_minutes: 21
-  lat: 51.4662551
-  lng: -0.1021612
-  status: pending
-  explored_at: null
-  score: null
-- name: London
-  station: Harringay
-  commute_minutes: 31
-  train_minutes: 21
-  lat: 51.5775578
-  lng: -0.1052701
-  status: pending
-  explored_at: null
-  score: null
-- name: Hendon
-  station: Hendon
-  commute_minutes: 31
-  train_minutes: 21
-  lat: 51.5802174
-  lng: -0.2388805
-  status: pending
-  explored_at: null
-  score: null
-- name: Oakleigh Park
-  station: Oakleigh Park
-  commute_minutes: 31
-  train_minutes: 21
-  lat: 51.6376675
-  lng: -0.1662251
-  status: pending
-  explored_at: null
-  score: null
-- name: Hornsey
-  station: Hornsey
-  commute_minutes: 32
-  train_minutes: 22
-  lat: 51.5863215
-  lng: -0.1116832
-  status: pending
-  explored_at: null
-  score: null
-- name: Alexandra Palace
-  station: Alexandra Palace
-  commute_minutes: 32
-  train_minutes: 22
-  lat: 51.5982024
-  lng: -0.1206625
-  status: pending
-  explored_at: null
-  score: null
-- name: Northumberland Park
-  station: Northumberland Park
-  commute_minutes: 32
-  train_minutes: 22
-  lat: 51.6019083
-  lng: -0.053865
-  status: pending
-  explored_at: null
-  score: null
-- name: New Southgate
-  station: New Southgate
-  commute_minutes: 32
-  train_minutes: 22
-  lat: 51.613804
-  lng: -0.1428091
-  status: pending
-  explored_at: null
-  score: null
-- name: Brent Cross West
-  station: Brent Cross West
-  commute_minutes: 33
-  train_minutes: 23
-  lat: 51.5688188
-  lng: -0.2265437
-  status: pending
-  explored_at: null
-  score: null
-- name: New Barnet
-  station: New Barnet
-  commute_minutes: 33
-  train_minutes: 23
-  lat: 51.6482779
-  lng: -0.1726236
-  status: pending
-  explored_at: null
-  score: null
-- name: London
-  station: Waterloo East
-  commute_minutes: 34
-  train_minutes: 24
-  lat: 51.5042171
-  lng: -0.1082027
-  status: pending
-  explored_at: null
-  score: null
-- name: Stratford
-  station: Stratford
-  commute_minutes: 34
-  train_minutes: 24
-  lat: 51.541289
-  lng: -0.0035472
-  status: pending
-  explored_at: null
-  score: null
-- name: Brixton
-  station: Brixton
-  commute_minutes: 35
-  train_minutes: 25
-  lat: 51.4628953
-  lng: -0.1133473
-  status: pending
-  explored_at: null
-  score: null
-- name: Limehouse
-  station: Limehouse
-  commute_minutes: 35
-  train_minutes: 25
-  lat: 51.5128705
-  lng: -0.0390456
-  status: pending
-  explored_at: null
-  score: null
-- name: Mill Hill Broadway
-  station: Mill Hill Broadway
-  commute_minutes: 35
-  train_minutes: 25
-  lat: 51.6126689
-  lng: -0.2488001
-  status: pending
-  explored_at: null
-  score: null
 - name: St Albans City
   station: St Albans City
   commute_minutes: 35
@@ -431,93 +17,12 @@ areas:
   status: pending
   explored_at: null
   score: null
-- name: Battersea Park
-  station: Battersea Park
-  commute_minutes: 36
-  train_minutes: 26
-  lat: 51.47761
-  lng: -0.1475846
-  status: pending
-  explored_at: null
-  score: null
-- name: Denmark Hill
-  station: Denmark Hill
-  commute_minutes: 36
-  train_minutes: 26
-  lat: 51.468043
-  lng: -0.0896031
-  status: pending
-  explored_at: null
-  score: null
-- name: Herne Hill
-  station: Herne Hill
-  commute_minutes: 36
-  train_minutes: 26
-  lat: 51.4534691
-  lng: -0.1022835
-  status: pending
-  explored_at: null
-  score: null
-- name: Palmers Green
-  station: Palmers Green
-  commute_minutes: 36
-  train_minutes: 26
-  lat: 51.6186609
-  lng: -0.1101687
-  status: pending
-  explored_at: null
-  score: null
-- name: Meridian Water
-  station: Meridian Water
-  commute_minutes: 36
-  train_minutes: 26
-  lat: 51.610003
-  lng: -0.0500855
-  status: pending
-  explored_at: null
-  score: null
-- name: Queenstown Road
-  station: Queenstown Road
-  commute_minutes: 37
-  train_minutes: 27
-  lat: 51.4752161
-  lng: -0.1462935
-  status: pending
-  explored_at: null
-  score: null
-- name: Winchmore Hill
-  station: Winchmore Hill
-  commute_minutes: 37
-  train_minutes: 27
-  lat: 51.6340675
-  lng: -0.1009414
-  status: pending
-  explored_at: null
-  score: null
 - name: Ebbsfleet International
   station: Ebbsfleet International
   commute_minutes: 37
   train_minutes: 27
   lat: 51.4435253
   lng: 0.3213747
-  status: pending
-  explored_at: null
-  score: null
-- name: London
-  station: Deptford
-  commute_minutes: 38
-  train_minutes: 28
-  lat: 51.4789824
-  lng: -0.0266353
-  status: pending
-  explored_at: null
-  score: null
-- name: Tulse Hill
-  station: Tulse Hill
-  commute_minutes: 38
-  train_minutes: 28
-  lat: 51.4399271
-  lng: -0.1048466
   status: pending
   explored_at: null
   score: null
@@ -548,24 +53,6 @@ areas:
   status: pending
   explored_at: null
   score: null
-- name: Peckham Rye
-  station: Peckham Rye
-  commute_minutes: 39
-  train_minutes: 29
-  lat: 51.4700059
-  lng: -0.0694125
-  status: pending
-  explored_at: null
-  score: null
-- name: Bowes Park
-  station: Bowes Park
-  commute_minutes: 39
-  train_minutes: 29
-  lat: 51.6071861
-  lng: -0.1204848
-  status: pending
-  explored_at: null
-  score: null
 - name: Brimsdown
   station: Brimsdown
   commute_minutes: 39
@@ -593,57 +80,12 @@ areas:
   status: pending
   explored_at: null
   score: null
-- name: London
-  station: Hackney Downs
-  commute_minutes: 40
-  train_minutes: 30
-  lat: 51.5486455
-  lng: -0.060686
-  status: pending
-  explored_at: null
-  score: null
-- name: Nunhead
-  station: Nunhead
-  commute_minutes: 40
-  train_minutes: 30
-  lat: 51.4668348
-  lng: -0.0523755
-  status: pending
-  explored_at: null
-  score: null
-- name: Earlsfield
-  station: Earlsfield
-  commute_minutes: 40
-  train_minutes: 30
-  lat: 51.4424033
-  lng: -0.1876937
-  status: pending
-  explored_at: null
-  score: null
-- name: Maryland
-  station: Maryland
-  commute_minutes: 40
-  train_minutes: 30
-  lat: 51.5460532
-  lng: 0.0059223
-  status: pending
-  explored_at: null
-  score: null
 - name: Norwood Junction
   station: Norwood Junction
   commute_minutes: 40
   train_minutes: 30
   lat: 51.3971695
   lng: -0.0746988
-  status: pending
-  explored_at: null
-  score: null
-- name: Harrow-on-the-Hill
-  station: Harrow-on-the-Hill
-  commute_minutes: 40
-  train_minutes: 30
-  lat: 51.5792702
-  lng: -0.3366561
   status: pending
   explored_at: null
   score: null
@@ -656,84 +98,12 @@ areas:
   status: pending
   explored_at: null
   score: null
-- name: Forest Gate
-  station: Forest Gate
-  commute_minutes: 41
-  train_minutes: 31
-  lat: 51.549251
-  lng: 0.0232808
-  status: pending
-  explored_at: null
-  score: null
-- name: Enfield
-  station: Ponders End
-  commute_minutes: 41
-  train_minutes: 31
-  lat: 51.6428468
-  lng: -0.0347864
-  status: pending
-  explored_at: null
-  score: null
 - name: Stevenage
   station: Stevenage
   commute_minutes: 41
   train_minutes: 31
   lat: 51.9018356
   lng: -0.207144
-  status: pending
-  explored_at: null
-  score: null
-- name: South Bermondsey
-  station: South Bermondsey
-  commute_minutes: 42
-  train_minutes: 32
-  lat: 51.4879512
-  lng: -0.0544564
-  status: pending
-  explored_at: null
-  score: null
-- name: Clapham Junction
-  station: Clapham Junction
-  commute_minutes: 42
-  train_minutes: 32
-  lat: 51.4644589
-  lng: -0.1705184
-  status: pending
-  explored_at: null
-  score: null
-- name: Wandsworth Town
-  station: Wandsworth Town
-  commute_minutes: 42
-  train_minutes: 32
-  lat: 51.4609627
-  lng: -0.1882512
-  status: pending
-  explored_at: null
-  score: null
-- name: New Cross
-  station: New Cross
-  commute_minutes: 42
-  train_minutes: 32
-  lat: 51.4763706
-  lng: -0.0326237
-  status: pending
-  explored_at: null
-  score: null
-- name: Greenwich
-  station: Greenwich
-  commute_minutes: 42
-  train_minutes: 32
-  lat: 51.4781086
-  lng: -0.0154152
-  status: pending
-  explored_at: null
-  score: null
-- name: Edmonton Green
-  station: Edmonton Green
-  commute_minutes: 42
-  train_minutes: 32
-  lat: 51.6244998
-  lng: -0.0614019
   status: pending
   explored_at: null
   score: null
@@ -755,102 +125,12 @@ areas:
   status: pending
   explored_at: null
   score: null
-- name: Queens Road Peckham
-  station: Queens Road Peckham
-  commute_minutes: 43
-  train_minutes: 33
-  lat: 51.4741117
-  lng: -0.0570532
-  status: pending
-  explored_at: null
-  score: null
-- name: Crofton Park
-  station: Crofton Park
-  commute_minutes: 43
-  train_minutes: 33
-  lat: 51.4552149
-  lng: -0.0366299
-  status: pending
-  explored_at: null
-  score: null
-- name: London
-  station: Lewisham
-  commute_minutes: 43
-  train_minutes: 33
-  lat: 51.4656437
-  lng: -0.0139562
-  status: pending
-  explored_at: null
-  score: null
-- name: Lea Bridge
-  station: Lea Bridge
-  commute_minutes: 43
-  train_minutes: 33
-  lat: 51.5667512
-  lng: -0.0371218
-  status: pending
-  explored_at: null
-  score: null
-- name: West Ham
-  station: West Ham
-  commute_minutes: 43
-  train_minutes: 33
-  lat: 51.5280966
-  lng: 0.0045685
-  status: pending
-  explored_at: null
-  score: null
 - name: Hitchin
   station: Hitchin
   commute_minutes: 43
   train_minutes: 33
   lat: 51.9531709
   lng: -0.263035
-  status: pending
-  explored_at: null
-  score: null
-- name: London
-  station: Kensal Green
-  commute_minutes: 44
-  train_minutes: 34
-  lat: 51.5306063
-  lng: -0.2244449
-  status: pending
-  explored_at: null
-  score: null
-- name: Balham
-  station: Balham
-  commute_minutes: 44
-  train_minutes: 34
-  lat: 51.4428285
-  lng: -0.1514426
-  status: pending
-  explored_at: null
-  score: null
-- name: St Johns
-  station: St Johns
-  commute_minutes: 44
-  train_minutes: 34
-  lat: 51.4690905
-  lng: -0.0221846
-  status: pending
-  explored_at: null
-  score: null
-- name: London
-  station: Ealing Broadway
-  commute_minutes: 44
-  train_minutes: 34
-  lat: 51.5149803
-  lng: -0.3004067
-  status: pending
-  explored_at: null
-  score: null
-- name: Ilford
-  station: Ilford
-  commute_minutes: 44
-  train_minutes: 34
-  lat: 51.5589375
-  lng: 0.0689113
   status: pending
   explored_at: null
   score: null
@@ -872,93 +152,12 @@ areas:
   status: pending
   explored_at: null
   score: null
-- name: Shepherd's Bush
-  station: Shepherd's Bush
-  commute_minutes: 45
-  train_minutes: 35
-  lat: 51.5057781
-  lng: -0.2179221
-  status: pending
-  explored_at: null
-  score: null
-- name: Wandsworth Common
-  station: Wandsworth Common
-  commute_minutes: 45
-  train_minutes: 35
-  lat: 51.4461242
-  lng: -0.1635168
-  status: pending
-  explored_at: null
-  score: null
-- name: London
-  station: Putney
-  commute_minutes: 45
-  train_minutes: 35
-  lat: 51.4609339
-  lng: -0.2153478
-  status: pending
-  explored_at: null
-  score: null
-- name: Maze Hill
-  station: Maze Hill
-  commute_minutes: 45
-  train_minutes: 35
-  lat: 51.4826479
-  lng: 0.00375
-  status: pending
-  explored_at: null
-  score: null
-- name: Westcombe Park
-  station: Westcombe Park
-  commute_minutes: 45
-  train_minutes: 35
-  lat: 51.4842403
-  lng: 0.0186204
-  status: pending
-  explored_at: null
-  score: null
-- name: Manor Park
-  station: Manor Park
-  commute_minutes: 45
-  train_minutes: 35
-  lat: 51.5521996
-  lng: 0.0450354
-  status: pending
-  explored_at: null
-  score: null
 - name: Letchworth Garden City
   station: Letchworth Garden City
   commute_minutes: 45
   train_minutes: 35
   lat: 51.9803536
   lng: -0.2289056
-  status: pending
-  explored_at: null
-  score: null
-- name: Streatham
-  station: Streatham
-  commute_minutes: 46
-  train_minutes: 36
-  lat: 51.4259609
-  lng: -0.1313131
-  status: pending
-  explored_at: null
-  score: null
-- name: Catford
-  station: Catford
-  commute_minutes: 46
-  train_minutes: 36
-  lat: 51.4444696
-  lng: -0.0261521
-  status: pending
-  explored_at: null
-  score: null
-- name: West Ealing
-  station: West Ealing
-  commute_minutes: 46
-  train_minutes: 36
-  lat: 51.5135365
-  lng: -0.3206893
   status: pending
   explored_at: null
   score: null
@@ -989,33 +188,6 @@ areas:
   status: pending
   explored_at: null
   score: null
-- name: West Dulwich
-  station: West Dulwich
-  commute_minutes: 47
-  train_minutes: 37
-  lat: 51.4402849
-  lng: -0.0908906
-  status: pending
-  explored_at: null
-  score: null
-- name: Sydenham Hill
-  station: Sydenham Hill
-  commute_minutes: 47
-  train_minutes: 37
-  lat: 51.4326101
-  lng: -0.0801504
-  status: pending
-  explored_at: null
-  score: null
-- name: Acton Main Line
-  station: Acton Main Line
-  commute_minutes: 47
-  train_minutes: 37
-  lat: 51.5169789
-  lng: -0.2679825
-  status: pending
-  explored_at: null
-  score: null
 - name: Croydon
   station: East Croydon
   commute_minutes: 47
@@ -1031,42 +203,6 @@ areas:
   train_minutes: 37
   lat: 51.7651554
   lng: -0.2158
-  status: pending
-  explored_at: null
-  score: null
-- name: London
-  station: Tooting
-  commute_minutes: 48
-  train_minutes: 38
-  lat: 51.4198463
-  lng: -0.1613225
-  status: pending
-  explored_at: null
-  score: null
-- name: Anerley
-  station: Anerley
-  commute_minutes: 48
-  train_minutes: 38
-  lat: 51.4125768
-  lng: -0.065494
-  status: pending
-  explored_at: null
-  score: null
-- name: Richmond
-  station: Richmond
-  commute_minutes: 48
-  train_minutes: 38
-  lat: 51.4632072
-  lng: -0.3004127
-  status: pending
-  explored_at: null
-  score: null
-- name: Grange Park
-  station: Grange Park
-  commute_minutes: 48
-  train_minutes: 38
-  lat: 51.6433292
-  lng: -0.0969391
   status: pending
   explored_at: null
   score: null
@@ -1097,15 +233,6 @@ areas:
   status: pending
   explored_at: null
   score: null
-- name: Gordon Hill
-  station: Gordon Hill
-  commute_minutes: 49
-  train_minutes: 39
-  lat: 51.6629506
-  lng: -0.0942203
-  status: pending
-  explored_at: null
-  score: null
 - name: Welham Green
   station: Welham Green
   commute_minutes: 49
@@ -1133,78 +260,6 @@ areas:
   status: pending
   explored_at: null
   score: null
-- name: Imperial Wharf
-  station: Imperial Wharf
-  commute_minutes: 50
-  train_minutes: 40
-  lat: 51.475103
-  lng: -0.1829268
-  status: pending
-  explored_at: null
-  score: null
-- name: East Dulwich
-  station: East Dulwich
-  commute_minutes: 50
-  train_minutes: 40
-  lat: 51.4610374
-  lng: -0.0807982
-  status: pending
-  explored_at: null
-  score: null
-- name: Barnes
-  station: Barnes
-  commute_minutes: 50
-  train_minutes: 40
-  lat: 51.466783
-  lng: -0.2411817
-  status: pending
-  explored_at: null
-  score: null
-- name: London
-  station: Barnes Bridge
-  commute_minutes: 50
-  train_minutes: 40
-  lat: 51.4720123
-  lng: -0.2526332
-  status: pending
-  explored_at: null
-  score: null
-- name: Bellingham
-  station: Bellingham
-  commute_minutes: 50
-  train_minutes: 40
-  lat: 51.4328307
-  lng: -0.0195194
-  status: pending
-  explored_at: null
-  score: null
-- name: Mitcham Eastfields
-  station: Mitcham Eastfields
-  commute_minutes: 50
-  train_minutes: 40
-  lat: 51.4073954
-  lng: -0.154872
-  status: pending
-  explored_at: null
-  score: null
-- name: Lee
-  station: Lee
-  commute_minutes: 50
-  train_minutes: 40
-  lat: 51.449689
-  lng: 0.0143728
-  status: pending
-  explored_at: null
-  score: null
-- name: Wembley Central
-  station: Wembley Central
-  commute_minutes: 50
-  train_minutes: 40
-  lat: 51.5523278
-  lng: -0.2966751
-  status: pending
-  explored_at: null
-  score: null
 - name: Raynes Park
   station: Raynes Park
   commute_minutes: 50
@@ -1220,15 +275,6 @@ areas:
   train_minutes: 40
   lat: 51.4402515
   lng: 0.0499618
-  status: pending
-  explored_at: null
-  score: null
-- name: Enfield Chase
-  station: Enfield Chase
-  commute_minutes: 50
-  train_minutes: 40
-  lat: 51.6526384
-  lng: -0.0908639
   status: pending
   explored_at: null
   score: null
@@ -1265,51 +311,6 @@ areas:
   train_minutes: 40
   lat: 52.0850343
   lng: -0.260819
-  status: pending
-  explored_at: null
-  score: null
-- name: Ladywell
-  station: Ladywell
-  commute_minutes: 51
-  train_minutes: 41
-  lat: 51.4560257
-  lng: -0.0191917
-  status: pending
-  explored_at: null
-  score: null
-- name: Hither Green
-  station: Hither Green
-  commute_minutes: 51
-  train_minutes: 41
-  lat: 51.4515872
-  lng: -0.0006473
-  status: pending
-  explored_at: null
-  score: null
-- name: Penge East
-  station: Penge East
-  commute_minutes: 51
-  train_minutes: 41
-  lat: 51.4193151
-  lng: -0.0541364
-  status: pending
-  explored_at: null
-  score: null
-- name: Charlton
-  station: Charlton
-  commute_minutes: 51
-  train_minutes: 41
-  lat: 51.4867602
-  lng: 0.030809
-  status: pending
-  explored_at: null
-  score: null
-- name: Beckenham Hill
-  station: Beckenham Hill
-  commute_minutes: 51
-  train_minutes: 41
-  lat: 51.4245222
-  lng: -0.0159101
   status: pending
   explored_at: null
   score: null
@@ -1385,42 +386,6 @@ areas:
   status: pending
   explored_at: null
   score: null
-- name: North Dulwich
-  station: North Dulwich
-  commute_minutes: 52
-  train_minutes: 42
-  lat: 51.4541783
-  lng: -0.0883292
-  status: pending
-  explored_at: null
-  score: null
-- name: Streatham Hill
-  station: Streatham Hill
-  commute_minutes: 52
-  train_minutes: 42
-  lat: 51.4383281
-  lng: -0.1277852
-  status: pending
-  explored_at: null
-  score: null
-- name: Chiswick
-  station: Chiswick
-  commute_minutes: 52
-  train_minutes: 42
-  lat: 51.4811465
-  lng: -0.2681753
-  status: pending
-  explored_at: null
-  score: null
-- name: Kidbrooke
-  station: Kidbrooke
-  commute_minutes: 52
-  train_minutes: 42
-  lat: 51.4620317
-  lng: 0.0279002
-  status: pending
-  explored_at: null
-  score: null
 - name: Twickenham
   station: Twickenham
   commute_minutes: 52
@@ -1475,33 +440,6 @@ areas:
   status: pending
   explored_at: null
   score: null
-- name: West Norwood
-  station: West Norwood
-  commute_minutes: 53
-  train_minutes: 43
-  lat: 51.4316272
-  lng: -0.1034911
-  status: pending
-  explored_at: null
-  score: null
-- name: Mortlake
-  station: Mortlake
-  commute_minutes: 53
-  train_minutes: 43
-  lat: 51.4680644
-  lng: -0.2673708
-  status: pending
-  explored_at: null
-  score: null
-- name: Kent House
-  station: Kent House
-  commute_minutes: 53
-  train_minutes: 43
-  lat: 51.4122745
-  lng: -0.045213
-  status: pending
-  explored_at: null
-  score: null
 - name: New Malden
   station: New Malden
   commute_minutes: 53
@@ -1535,51 +473,6 @@ areas:
   train_minutes: 43
   lat: 51.3965972
   lng: 0.5002689
-  status: pending
-  explored_at: null
-  score: null
-- name: New Cross Gate
-  station: New Cross Gate
-  commute_minutes: 54
-  train_minutes: 44
-  lat: 51.4752983
-  lng: -0.0404289
-  status: pending
-  explored_at: null
-  score: null
-- name: Brockley
-  station: Brockley
-  commute_minutes: 54
-  train_minutes: 44
-  lat: 51.4642287
-  lng: -0.0376125
-  status: pending
-  explored_at: null
-  score: null
-- name: Haydons Road
-  station: Haydons Road
-  commute_minutes: 54
-  train_minutes: 44
-  lat: 51.4253627
-  lng: -0.1883425
-  status: pending
-  explored_at: null
-  score: null
-- name: Catford Bridge
-  station: Catford Bridge
-  commute_minutes: 54
-  train_minutes: 44
-  lat: 51.4445909
-  lng: -0.0249226
-  status: pending
-  explored_at: null
-  score: null
-- name: Blackheath
-  station: Blackheath
-  commute_minutes: 54
-  train_minutes: 44
-  lat: 51.4657989
-  lng: 0.0089218
   status: pending
   explored_at: null
   score: null
@@ -1682,15 +575,6 @@ areas:
   status: pending
   explored_at: null
   score: null
-- name: Kew Bridge
-  station: Kew Bridge
-  commute_minutes: 55
-  train_minutes: 45
-  lat: 51.4895024
-  lng: -0.287225
-  status: pending
-  explored_at: null
-  score: null
 - name: Motspur Park
   station: Motspur Park
   commute_minutes: 55
@@ -1706,15 +590,6 @@ areas:
   train_minutes: 45
   lat: 51.4897681
   lng: 0.0840176
-  status: pending
-  explored_at: null
-  score: null
-- name: Barking
-  station: Barking
-  commute_minutes: 55
-  train_minutes: 45
-  lat: 51.5402677
-  lng: 0.0793235
   status: pending
   explored_at: null
   score: null
@@ -1754,78 +629,6 @@ areas:
   status: pending
   explored_at: null
   score: null
-- name: Honor Oak Park
-  station: Honor Oak Park
-  commute_minutes: 56
-  train_minutes: 46
-  lat: 51.4504605
-  lng: -0.0450199
-  status: pending
-  explored_at: null
-  score: null
-- name: Forest Hill
-  station: Forest Hill
-  commute_minutes: 56
-  train_minutes: 46
-  lat: 51.4392419
-  lng: -0.0530903
-  status: pending
-  explored_at: null
-  score: null
-- name: Gipsy Hill
-  station: Gipsy Hill
-  commute_minutes: 56
-  train_minutes: 46
-  lat: 51.4245334
-  lng: -0.0840424
-  status: pending
-  explored_at: null
-  score: null
-- name: Lower Sydenham
-  station: Lower Sydenham
-  commute_minutes: 56
-  train_minutes: 46
-  lat: 51.4247446
-  lng: -0.0332998
-  status: pending
-  explored_at: null
-  score: null
-- name: New Beckenham
-  station: New Beckenham
-  commute_minutes: 56
-  train_minutes: 46
-  lat: 51.4169395
-  lng: -0.0352069
-  status: pending
-  explored_at: null
-  score: null
-- name: Wembley Stadium
-  station: Wembley Stadium
-  commute_minutes: 56
-  train_minutes: 46
-  lat: 51.5542489
-  lng: -0.2847664
-  status: pending
-  explored_at: null
-  score: null
-- name: Beckenham Junction
-  station: Beckenham Junction
-  commute_minutes: 56
-  train_minutes: 46
-  lat: 51.4110623
-  lng: -0.0259866
-  status: pending
-  explored_at: null
-  score: null
-- name: Woolwich Arsenal
-  station: Woolwich Arsenal
-  commute_minutes: 56
-  train_minutes: 46
-  lat: 51.4896184
-  lng: 0.0703782
-  status: pending
-  explored_at: null
-  score: null
 - name: Hackbridge
   station: Hackbridge
   commute_minutes: 56
@@ -1850,33 +653,6 @@ areas:
   train_minutes: 46
   lat: 51.7064134
   lng: -0.4378216
-  status: pending
-  explored_at: null
-  score: null
-- name: Wimbledon
-  station: Wimbledon
-  commute_minutes: 57
-  train_minutes: 47
-  lat: 51.4220252
-  lng: -0.2052107
-  status: pending
-  explored_at: null
-  score: null
-- name: North Sheen
-  station: North Sheen
-  commute_minutes: 57
-  train_minutes: 47
-  lat: 51.4653247
-  lng: -0.2865821
-  status: pending
-  explored_at: null
-  score: null
-- name: Brentford
-  station: Brentford
-  commute_minutes: 57
-  train_minutes: 47
-  lat: 51.4876569
-  lng: -0.3096825
   status: pending
   explored_at: null
   score: null
@@ -1967,33 +743,6 @@ areas:
   train_minutes: 47
   lat: 52.2316268
   lng: -0.2470646
-  status: pending
-  explored_at: null
-  score: null
-- name: Sydenham
-  station: Sydenham
-  commute_minutes: 58
-  train_minutes: 48
-  lat: 51.427742
-  lng: -0.0542215
-  status: pending
-  explored_at: null
-  score: null
-- name: London
-  station: Norbury
-  commute_minutes: 58
-  train_minutes: 48
-  lat: 51.4113697
-  lng: -0.1218018
-  status: pending
-  explored_at: null
-  score: null
-- name: Eltham
-  station: Eltham
-  commute_minutes: 58
-  train_minutes: 48
-  lat: 51.4555936
-  lng: 0.0522692
   status: pending
   explored_at: null
   score: null
@@ -2150,15 +899,6 @@ areas:
   status: pending
   explored_at: null
   score: null
-- name: Streatham Common
-  station: Streatham Common
-  commute_minutes: 59
-  train_minutes: 49
-  lat: 51.4185662
-  lng: -0.1359263
-  status: pending
-  explored_at: null
-  score: null
 - name: Shortlands
   station: Shortlands
   commute_minutes: 59
@@ -2237,33 +977,6 @@ areas:
   train_minutes: 49
   lat: 51.3803092
   lng: 0.5212081
-  status: pending
-  explored_at: null
-  score: null
-- name: London
-  station: Kensington (Olympia)
-  commute_minutes: 60
-  train_minutes: 50
-  lat: 51.497437
-  lng: -0.2094954
-  status: pending
-  explored_at: null
-  score: null
-- name: Clock House
-  station: Clock House
-  commute_minutes: 60
-  train_minutes: 50
-  lat: 51.4083449
-  lng: -0.0408182
-  status: pending
-  explored_at: null
-  score: null
-- name: Syon Lane
-  station: Syon Lane
-  commute_minutes: 60
-  train_minutes: 50
-  lat: 51.4818147
-  lng: -0.32478
   status: pending
   explored_at: null
   score: null

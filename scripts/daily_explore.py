@@ -12,10 +12,18 @@ Usage:
 import argparse
 import json
 import sys
+import logging
 from datetime import datetime
 from pathlib import Path
 
 import yaml
+
+# Set up logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
 # Add parent to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -66,48 +74,89 @@ def get_next_area(areas_data: dict) -> dict | None:
 def explore_area(area: dict, dry_run: bool = False) -> dict:
     """
     Explore an area and gather all relevant data.
-    
+
     Returns enriched area data with score.
     """
+    logger.info(f"Starting exploration for: {area['name']}")
     print(f"\n🔍 Exploring: {area['name']}")
     print(f"   Station: {area['station']}")
     print(f"   Commute: {area['commute_minutes']} min to King's Cross")
-    
+
     cache_data = {
         "explored_at": datetime.now().isoformat(),
         "station": area["station"],
         "commute_minutes": area["commute_minutes"],
+        "exploration_status": "in_progress",
     }
-    
-    # Gather amenities (supermarkets, pharmacies)
-    print("   📍 Gathering amenities...")
-    amenities = gather_amenities(area["lat"], area["lng"])
-    cache_data["amenities"] = amenities
-    print(f"      Found {len(amenities.get('supermarkets', []))} supermarkets")
-    
-    # Gather nature data (parks, green spaces)
-    print("   🌳 Gathering nature data...")
-    nature = gather_nature_data(area["lat"], area["lng"])
-    cache_data["nature"] = nature
-    print(f"      Found {nature.get('parks_count', 0)} parks")
-    
-    # Calculate score
-    print("   📊 Calculating score...")
-    score = score_area(area, amenities, nature)
-    cache_data["score"] = score
-    print(f"      Score: {score}/100")
-    
+
+    # Save initial partial cache
     if not dry_run:
-        # Save cache
         save_area_cache(area["name"], cache_data)
-        print(f"   💾 Cached data saved")
-    
-    return {
-        **area,
-        "status": "explored",
-        "explored_at": datetime.now().strftime("%Y-%m-%d"),
-        "score": score,
-    }
+        logger.info(f"Saved initial cache for {area['name']}")
+
+    try:
+        # Gather amenities (supermarkets, pharmacies)
+        print("   📍 Gathering amenities...")
+        logger.info("Gathering amenities...")
+        amenities = gather_amenities(area["lat"], area["lng"])
+        cache_data["amenities"] = amenities
+        print(f"      Found {len(amenities.get('supermarkets', []))} supermarkets")
+
+        # Save partial results after amenities
+        if not dry_run:
+            cache_data["exploration_status"] = "amenities_complete"
+            save_area_cache(area["name"], cache_data)
+            logger.info(f"Saved amenities for {area['name']}")
+
+        # Gather nature data (parks, green spaces)
+        print("   🌳 Gathering nature data...")
+        logger.info("Gathering nature data...")
+        nature = gather_nature_data(area["lat"], area["lng"])
+        cache_data["nature"] = nature
+        print(f"      Found {nature.get('parks_count', 0)} parks")
+
+        # Save partial results after nature data
+        if not dry_run:
+            cache_data["exploration_status"] = "nature_complete"
+            save_area_cache(area["name"], cache_data)
+            logger.info(f"Saved nature data for {area['name']}")
+
+        # Calculate score
+        print("   📊 Calculating score...")
+        logger.info("Calculating score...")
+        score = score_area(area, amenities, nature)
+        cache_data["score"] = score
+        cache_data["exploration_status"] = "complete"
+        print(f"      Score: {score}/100")
+
+        if not dry_run:
+            # Save final cache
+            save_area_cache(area["name"], cache_data)
+            logger.info(f"Saved final cache for {area['name']}")
+            print(f"   💾 Cached data saved")
+
+        logger.info(f"Successfully completed exploration for {area['name']}")
+
+        return {
+            **area,
+            "status": "explored",
+            "explored_at": datetime.now().strftime("%Y-%m-%d"),
+            "score": score,
+        }
+
+    except Exception as e:
+        logger.error(f"Exploration failed for {area['name']}: {e}", exc_info=True)
+        print(f"   ❌ Exploration failed: {e}")
+
+        # Save partial cache with error
+        if not dry_run:
+            cache_data["exploration_status"] = "failed"
+            cache_data["error"] = str(e)
+            save_area_cache(area["name"], cache_data)
+            logger.info(f"Saved partial cache with error for {area['name']}")
+
+        # Re-raise to let caller handle
+        raise
 
 
 def format_telegram_message(area: dict, cache: dict, progress: dict = None) -> str:

@@ -4,15 +4,54 @@ Uses OpenStreetMap Overpass API (free) or Google Places.
 """
 
 import os
+import time
+import logging
 from typing import Optional
 
 import httpx
+
+# Set up logging
+logger = logging.getLogger(__name__)
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+
+
+def _retry_with_backoff(func, max_retries=3, initial_delay=1):
+    """
+    Retry a function with exponential backoff.
+
+    Args:
+        func: Callable function to retry
+        max_retries: Maximum number of retry attempts
+        initial_delay: Initial delay in seconds (doubles each retry)
+
+    Returns:
+        Result from func or raises last exception
+    """
+    delay = initial_delay
+    last_error = None
+
+    for attempt in range(max_retries):
+        try:
+            return func()
+        except Exception as e:
+            last_error = e
+            if attempt < max_retries - 1:
+                logger.warning(f"Attempt {attempt + 1} failed: {e}. Retrying in {delay}s...")
+                time.sleep(delay)
+                delay *= 2
+            else:
+                logger.error(f"All {max_retries} attempts failed. Last error: {e}")
+
+    raise last_error
 
 
 def gather_amenities(lat: float, lng: float, radius_m: int = 1500) -> dict:
     """
     Gather amenity data for an area.
-    
+
     Returns dict with supermarkets, pharmacies, etc.
     """
     amenities = {
@@ -20,11 +59,12 @@ def gather_amenities(lat: float, lng: float, radius_m: int = 1500) -> dict:
         "pharmacies": [],
         "restaurants": [],
     }
-    
-    # Try Overpass API first (free)
-    try:
+
+    logger.info(f"Gathering amenities for ({lat}, {lng}) within {radius_m}m radius")
+
+    def _fetch_amenities():
         overpass_url = "https://overpass-api.de/api/interpreter"
-        
+
         # Query for amenities within radius
         query = f"""
         [out:json][timeout:30];
@@ -34,11 +74,15 @@ def gather_amenities(lat: float, lng: float, radius_m: int = 1500) -> dict:
         );
         out body;
         """
-        
+
         response = httpx.post(overpass_url, data={"data": query}, timeout=30)
         response.raise_for_status()
-        data = response.json()
-        
+        return response.json()
+
+    # Try Overpass API with retries
+    try:
+        data = _retry_with_backoff(_fetch_amenities, max_retries=3)
+
         for element in data.get("elements", []):
             tags = element.get("tags", {})
             item = {
@@ -47,26 +91,29 @@ def gather_amenities(lat: float, lng: float, radius_m: int = 1500) -> dict:
                 "lng": element["lon"],
                 "distance_m": _calculate_distance_m(lat, lng, element["lat"], element["lon"]),
             }
-            
+
             if tags.get("shop") == "supermarket":
                 amenities["supermarkets"].append(item)
             elif tags.get("amenity") == "pharmacy":
                 amenities["pharmacies"].append(item)
-        
+
         # Sort by distance
         for key in amenities:
             amenities[key] = sorted(amenities[key], key=lambda x: x["distance_m"])
-        
+
+        logger.info(f"Found {len(amenities['supermarkets'])} supermarkets, {len(amenities['pharmacies'])} pharmacies")
+
     except Exception as e:
-        print(f"      Error gathering amenities: {e}")
-    
+        logger.error(f"Failed to gather amenities after retries: {e}")
+        print(f"      ⚠️  Error gathering amenities: {e}")
+
     return amenities
 
 
 def gather_nature_data(lat: float, lng: float, radius_m: int = 2000) -> dict:
     """
     Gather nature/green space data for an area.
-    
+
     Returns dict with parks, nature reserves, etc.
     """
     nature = {
@@ -75,10 +122,12 @@ def gather_nature_data(lat: float, lng: float, radius_m: int = 2000) -> dict:
         "nature_reserves": [],
         "countryside_access": False,
     }
-    
-    try:
+
+    logger.info(f"Gathering nature data for ({lat}, {lng}) within {radius_m}m radius")
+
+    def _fetch_nature():
         overpass_url = "https://overpass-api.de/api/interpreter"
-        
+
         # Query for parks and green spaces
         query = f"""
         [out:json][timeout:30];
@@ -90,26 +139,29 @@ def gather_nature_data(lat: float, lng: float, radius_m: int = 2000) -> dict:
         );
         out center body;
         """
-        
+
         response = httpx.post(overpass_url, data={"data": query}, timeout=30)
         response.raise_for_status()
-        data = response.json()
-        
+        return response.json()
+
+    try:
+        data = _retry_with_backoff(_fetch_nature, max_retries=3)
+
         seen_names = set()
-        
+
         for element in data.get("elements", []):
             tags = element.get("tags", {})
             name = tags.get("name")
-            
+
             if not name or name in seen_names:
                 continue
             seen_names.add(name)
-            
+
             # Get center coordinates
             center = element.get("center", {})
             elem_lat = center.get("lat", element.get("lat", lat))
             elem_lng = center.get("lon", element.get("lon", lng))
-            
+
             item = {
                 "name": name,
                 "lat": elem_lat,
@@ -117,21 +169,24 @@ def gather_nature_data(lat: float, lng: float, radius_m: int = 2000) -> dict:
                 "distance_m": _calculate_distance_m(lat, lng, elem_lat, elem_lng),
                 "type": tags.get("leisure") or tags.get("landuse"),
             }
-            
+
             if tags.get("leisure") == "park":
                 nature["parks"].append(item)
             elif tags.get("leisure") == "nature_reserve" or tags.get("landuse") == "forest":
                 nature["nature_reserves"].append(item)
                 nature["countryside_access"] = True
-        
+
         # Sort by distance
         nature["parks"] = sorted(nature["parks"], key=lambda x: x["distance_m"])[:10]
         nature["nature_reserves"] = sorted(nature["nature_reserves"], key=lambda x: x["distance_m"])[:5]
         nature["parks_count"] = len(nature["parks"])
-        
+
+        logger.info(f"Found {len(nature['parks'])} parks, {len(nature['nature_reserves'])} nature reserves")
+
     except Exception as e:
-        print(f"      Error gathering nature data: {e}")
-    
+        logger.error(f"Failed to gather nature data after retries: {e}")
+        print(f"      ⚠️  Error gathering nature data: {e}")
+
     return nature
 
 
