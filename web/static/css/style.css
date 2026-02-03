@@ -332,7 +332,270 @@ footer a {
     text-decoration: none;
 }
 
+/* Areas Table Section */
+.areas-table-section {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.section-header h2 {
+    margin-bottom: 0;
+}
+
+.area-count {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    background: var(--bg);
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+}
+
+/* Filter Controls */
+.filter-controls {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.search-box {
+    position: relative;
+    flex: 1;
+    min-width: 200px;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 0.75rem 1rem 0.75rem 2.5rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.875rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.search-box input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.search-icon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1rem;
+}
+
+.filter-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.filter-btn {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border);
+    background: var(--card-bg);
+    border-radius: 8px;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.filter-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.filter-btn.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+}
+
+/* Areas Table */
+.areas-table-container {
+    overflow-x: auto;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+}
+
+.areas-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+}
+
+.areas-table thead {
+    background: var(--bg);
+}
+
+.areas-table th {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: var(--text-muted);
+    border-bottom: 2px solid var(--border);
+    white-space: nowrap;
+}
+
+.areas-table th.sortable {
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.2s;
+}
+
+.areas-table th.sortable:hover {
+    background: var(--border);
+}
+
+.areas-table th .sort-indicator {
+    margin-left: 0.25rem;
+    color: var(--primary);
+    font-weight: 700;
+}
+
+.areas-table th.sorted-asc,
+.areas-table th.sorted-desc {
+    color: var(--primary);
+}
+
+.areas-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.area-table-row {
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.area-table-row:hover {
+    background: var(--bg);
+}
+
+.area-table-row.explored {
+    background: rgba(22, 163, 74, 0.05);
+}
+
+.area-table-row.explored:hover {
+    background: rgba(22, 163, 74, 0.1);
+}
+
+/* Table Cells */
+.commute-cell {
+    width: 100px;
+}
+
+.commute-badge {
+    background: var(--bg);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-weight: 500;
+    font-size: 0.8rem;
+}
+
+.name-cell {
+    font-weight: 500;
+}
+
+.area-name-link {
+    color: var(--primary);
+}
+
+.area-table-row:hover .area-name-link {
+    text-decoration: underline;
+}
+
+.station-cell {
+    color: var(--text-muted);
+}
+
+.status-cell {
+    width: 120px;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.status-badge.status-explored {
+    background: rgba(22, 163, 74, 0.1);
+    color: var(--success);
+}
+
+.status-badge.status-pending {
+    background: rgba(202, 138, 4, 0.1);
+    color: var(--warning);
+}
+
+.score-cell {
+    width: 80px;
+}
+
+.score-badge {
+    background: var(--success);
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+
+.score-empty {
+    color: var(--text-muted);
+}
+
+/* No Results */
+.no-results {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-muted);
+}
+
 /* Responsive */
+@media (max-width: 768px) {
+    .filter-controls {
+        flex-direction: column;
+    }
+    
+    .search-box {
+        width: 100%;
+    }
+    
+    .filter-buttons {
+        justify-content: flex-start;
+        overflow-x: auto;
+    }
+    
+    .areas-table th,
+    .areas-table td {
+        padding: 0.5rem 0.75rem;
+    }
+    
+    .station-cell {
+        display: none;
+    }
+    
+    .areas-table th:nth-child(3) {
+        display: none;
+    }
+}
+
 @media (max-width: 640px) {
     main {
         padding: 1rem;
@@ -350,5 +613,15 @@ footer a {
     .area-details {
         flex-direction: column;
         gap: 0.25rem;
+    }
+    
+    .section-header {
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: flex-start;
+    }
+    
+    .areas-table-section {
+        padding: 1rem;
     }
 }

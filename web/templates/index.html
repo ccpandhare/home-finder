@@ -56,56 +56,229 @@
             </div>
         </section>
 
-        <!-- Explored Areas -->
-        <section class="areas-section">
-            <h2>✅ Explored Areas</h2>
-            {% if explored %}
-            <div class="areas-grid">
-                {% for area in explored %}
-                <a href="/area/{{ area.name | urlencode }}" class="area-card explored">
-                    <div class="area-header">
-                        <h3>{{ area.name }}</h3>
-                        <span class="score">{{ area.score or '?' }}/100</span>
-                    </div>
-                    <div class="area-details">
-                        <span>🚂 {{ area.commute_minutes }} min</span>
-                        <span>📍 {{ area.station }}</span>
-                    </div>
-                    {% if area.explored_at %}
-                    <div class="area-date">Explored {{ area.explored_at }}</div>
-                    {% endif %}
-                </a>
-                {% endfor %}
+        <!-- All Areas Section with Filters -->
+        <section class="areas-section areas-table-section">
+            <div class="section-header">
+                <h2>📍 All Commutable Areas</h2>
+                <span class="area-count" id="areaCount">{{ stats.total }} areas</span>
             </div>
-            {% else %}
-            <p class="empty-state">No areas explored yet. Run the daily explorer to get started!</p>
-            {% endif %}
-        </section>
-
-        <!-- Pending Areas -->
-        <section class="areas-section">
-            <h2>⏳ Pending Areas</h2>
-            {% if pending %}
-            <div class="areas-list">
-                {% for area in pending[:20] %}
-                <div class="area-row pending">
-                    <span class="area-name">{{ area.name }}</span>
-                    <span class="area-station">{{ area.station }}</span>
-                    <span class="area-commute">{{ area.commute_minutes }} min</span>
+            
+            <!-- Search and Filter Controls -->
+            <div class="filter-controls">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Search areas or stations..." autocomplete="off">
+                    <span class="search-icon">🔍</span>
                 </div>
-                {% endfor %}
-                {% if pending | length > 20 %}
-                <p class="more-areas">... and {{ pending | length - 20 }} more</p>
-                {% endif %}
+                <div class="filter-buttons">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="explored">✅ Explored</button>
+                    <button class="filter-btn" data-filter="pending">⏳ Pending</button>
+                </div>
             </div>
-            {% else %}
-            <p class="empty-state">No pending areas. Run commute discovery to populate the queue!</p>
-            {% endif %}
+
+            <!-- Areas Table -->
+            <div class="areas-table-container">
+                <table class="areas-table" id="areasTable">
+                    <thead>
+                        <tr>
+                            <th class="sortable sorted-asc" data-sort="commute">
+                                <span>Commute</span>
+                                <span class="sort-indicator">↑</span>
+                            </th>
+                            <th class="sortable" data-sort="name">
+                                <span>Area</span>
+                                <span class="sort-indicator"></span>
+                            </th>
+                            <th class="sortable" data-sort="station">
+                                <span>Station</span>
+                                <span class="sort-indicator"></span>
+                            </th>
+                            <th class="sortable" data-sort="status">
+                                <span>Status</span>
+                                <span class="sort-indicator"></span>
+                            </th>
+                            <th class="sortable" data-sort="score">
+                                <span>Score</span>
+                                <span class="sort-indicator"></span>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="areasTableBody">
+                        {% for area in all_areas %}
+                        <tr class="area-table-row {{ area.status }}" 
+                            data-name="{{ area.name | lower }}" 
+                            data-station="{{ area.station | lower }}"
+                            data-status="{{ area.status }}"
+                            data-commute="{{ area.commute_minutes }}"
+                            data-score="{{ area.score or 0 }}"
+                            onclick="window.location.href='/area/{{ area.name | urlencode }}'">
+                            <td class="commute-cell">
+                                <span class="commute-badge">{{ area.commute_minutes }} min</span>
+                            </td>
+                            <td class="name-cell">
+                                <span class="area-name-link">{{ area.name }}</span>
+                            </td>
+                            <td class="station-cell">{{ area.station }}</td>
+                            <td class="status-cell">
+                                <span class="status-badge status-{{ area.status }}">
+                                    {% if area.status == 'explored' %}✅{% else %}⏳{% endif %}
+                                    {{ area.status | capitalize }}
+                                </span>
+                            </td>
+                            <td class="score-cell">
+                                {% if area.score %}
+                                <span class="score-badge">{{ area.score }}/100</span>
+                                {% else %}
+                                <span class="score-empty">—</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- No Results Message -->
+            <div class="no-results" id="noResults" style="display: none;">
+                <p>No areas match your search or filter criteria.</p>
+            </div>
         </section>
     </main>
 
     <footer>
         <p>Last updated: {{ last_updated }} | Move target: June 2026</p>
     </footer>
+
+    <script>
+        // Areas table functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            const tableBody = document.getElementById('areasTableBody');
+            const areaCount = document.getElementById('areaCount');
+            const noResults = document.getElementById('noResults');
+            const table = document.getElementById('areasTable');
+            
+            let currentFilter = 'all';
+            let currentSearch = '';
+            let currentSort = 'commute';
+            let sortAscending = true;
+
+            // Filter buttons
+            filterButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    filterButtons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentFilter = this.dataset.filter;
+                    applyFilters();
+                });
+            });
+
+            // Search input
+            searchInput.addEventListener('input', function() {
+                currentSearch = this.value.toLowerCase().trim();
+                applyFilters();
+            });
+
+            // Sortable headers
+            table.querySelectorAll('th.sortable').forEach(th => {
+                th.addEventListener('click', function() {
+                    const sortKey = this.dataset.sort;
+                    
+                    // Toggle direction if same column
+                    if (currentSort === sortKey) {
+                        sortAscending = !sortAscending;
+                    } else {
+                        currentSort = sortKey;
+                        sortAscending = true;
+                    }
+                    
+                    // Update header styles
+                    table.querySelectorAll('th.sortable').forEach(h => {
+                        h.classList.remove('sorted-asc', 'sorted-desc');
+                        h.querySelector('.sort-indicator').textContent = '';
+                    });
+                    this.classList.add(sortAscending ? 'sorted-asc' : 'sorted-desc');
+                    this.querySelector('.sort-indicator').textContent = sortAscending ? '↑' : '↓';
+                    
+                    sortTable();
+                });
+            });
+
+            function applyFilters() {
+                const rows = tableBody.querySelectorAll('tr');
+                let visibleCount = 0;
+
+                rows.forEach(row => {
+                    const name = row.dataset.name;
+                    const station = row.dataset.station;
+                    const status = row.dataset.status;
+                    
+                    // Check filter
+                    const passesFilter = currentFilter === 'all' || status === currentFilter;
+                    
+                    // Check search
+                    const passesSearch = !currentSearch || 
+                        name.includes(currentSearch) || 
+                        station.includes(currentSearch);
+                    
+                    if (passesFilter && passesSearch) {
+                        row.style.display = '';
+                        visibleCount++;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+
+                // Update count
+                areaCount.textContent = `${visibleCount} area${visibleCount !== 1 ? 's' : ''}`;
+                
+                // Show/hide no results message
+                noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+            }
+
+            function sortTable() {
+                const rows = Array.from(tableBody.querySelectorAll('tr'));
+                
+                rows.sort((a, b) => {
+                    let aVal, bVal;
+                    
+                    switch (currentSort) {
+                        case 'commute':
+                            aVal = parseInt(a.dataset.commute);
+                            bVal = parseInt(b.dataset.commute);
+                            break;
+                        case 'name':
+                            aVal = a.dataset.name;
+                            bVal = b.dataset.name;
+                            break;
+                        case 'station':
+                            aVal = a.dataset.station;
+                            bVal = b.dataset.station;
+                            break;
+                        case 'status':
+                            aVal = a.dataset.status;
+                            bVal = b.dataset.status;
+                            break;
+                        case 'score':
+                            aVal = parseInt(a.dataset.score) || 0;
+                            bVal = parseInt(b.dataset.score) || 0;
+                            break;
+                        default:
+                            return 0;
+                    }
+                    
+                    if (typeof aVal === 'string') {
+                        return sortAscending ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+                    } else {
+                        return sortAscending ? aVal - bVal : bVal - aVal;
+                    }
+                });
+                
+                // Re-append rows in sorted order
+                rows.forEach(row => tableBody.appendChild(row));
+            }
+        });
+    </script>
 </body>
 </html>

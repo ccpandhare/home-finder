@@ -75,19 +75,13 @@ def index():
     areas = get_areas()
     stats = get_stats()
     
-    # Sort: explored first (by score desc), then pending
-    explored = sorted(
-        [a for a in areas if a.get("status") == "explored"],
-        key=lambda x: x.get("score", 0),
-        reverse=True
-    )
-    pending = [a for a in areas if a.get("status") == "pending"]
+    # Sort all areas by commute time (ascending) by default
+    all_areas = sorted(areas, key=lambda x: x.get("commute_minutes", 999))
     
     return render_template(
         "index.html",
         criteria=criteria,
-        explored=explored,
-        pending=pending,
+        all_areas=all_areas,
         stats=stats,
         phase=criteria.get("phase", 1),
         last_updated=datetime.now().strftime("%Y-%m-%d %H:%M")
