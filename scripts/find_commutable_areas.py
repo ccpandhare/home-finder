@@ -57,9 +57,60 @@ def save_areas(areas: list) -> None:
     print(f"✅ Saved {len(areas)} areas to {areas_file}")
 
 
+def is_london_zone_1_4(name: str, station: str, lat: float, lng: float) -> bool:
+    """
+    Check if a station is in London Zones 1-4 (should be excluded).
+    Uses keyword matching + distance from central London.
+    """
+    from math import radians, sin, cos, sqrt, atan2
+    
+    # Central London (King's Cross)
+    CENTRAL_LAT, CENTRAL_LNG = 51.5308, -0.1238
+    MIN_DISTANCE_KM = 15  # Roughly Zone 4 boundary
+    
+    # Known London Zone 1-4 keywords
+    london_keywords = [
+        'london ', 'kings cross', "king's cross", 'st pancras', 'euston', 'paddington',
+        'liverpool street', 'fenchurch', 'cannon street', 'waterloo', 'victoria',
+        'charing cross', 'blackfriars', 'moorgate', 'marylebone', 'old street',
+        'angel', 'bank', 'monument', 'tower', 'aldgate', 'shoreditch',
+        'whitechapel', 'stratford', 'west ham', 'canning town', 'canary wharf',
+        'greenwich', 'lewisham', 'peckham', 'brixton', 'clapham', 'battersea',
+        'vauxhall', 'elephant', 'borough', 'southwark', 'bermondsey',
+        'finsbury park', 'highbury', 'islington', 'hackney', 'dalston',
+        'bethnal green', 'mile end', 'bow', 'tottenham hale', 'seven sisters',
+        'camden', 'kentish town', 'hampstead', 'kilburn', 'willesden',
+        'cricklewood', 'west hampstead', 'finchley', 'barnet', 'edgware',
+        'harrow', 'wembley', 'ealing', 'acton', 'shepherd', 'hammersmith',
+        'fulham', 'putney', 'wandsworth', 'wimbledon', 'tooting', 'balham',
+        'streatham', 'tulse hill', 'herne hill', 'denmark hill', 'penge',
+        'crystal palace', 'sydenham', 'forest hill', 'catford', 'ladywell',
+        'brockley', 'new cross', 'deptford', 'surrey quays', 'canada water',
+        'rotherhithe', 'wapping', 'shadwell', 'limehouse', 'poplar',
+        'drayton park', 'essex road', 'hornsey', 'crouch hill', 'harringay'
+    ]
+    
+    name_lower = name.lower()
+    station_lower = station.lower()
+    
+    # Check keywords
+    if any(kw in name_lower or kw in station_lower for kw in london_keywords):
+        return True
+    
+    # Check distance (haversine)
+    R = 6371
+    lat1, lng1, lat2, lng2 = map(radians, [CENTRAL_LAT, CENTRAL_LNG, lat, lng])
+    dlat, dlng = lat2 - lat1, lng2 - lng1
+    a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlng/2)**2
+    dist_km = 2 * R * atan2(sqrt(a), sqrt(1-a))
+    
+    return dist_km < MIN_DISTANCE_KM
+
+
 def find_commutable_stations(max_minutes: int, walking_buffer: int = 10) -> list:
     """
     Find all stations within commute time of King's Cross.
+    Excludes London Zones 1-4 (focus on commuter belt).
     
     Args:
         max_minutes: Maximum total commute time
@@ -70,6 +121,7 @@ def find_commutable_stations(max_minutes: int, walking_buffer: int = 10) -> list
     """
     print(f"🔍 Finding stations within {max_minutes} min of King's Cross...")
     print(f"   (including {walking_buffer} min walking buffer)")
+    print(f"   (excluding London Zones 1-4)")
     
     effective_max = max_minutes - walking_buffer
     
@@ -102,8 +154,14 @@ def find_commutable_stations(max_minutes: int, walking_buffer: int = 10) -> list
                 commute_checker.cache_time(station["name"], train_time)
         
         if train_time is not None and train_time <= effective_max:
+            area_name = station["town"] or station["name"].replace(" Station", "")
+            
+            # Skip London Zones 1-4
+            if is_london_zone_1_4(area_name, station["name"], station["lat"], station["lng"]):
+                continue
+                
             commutable.append({
-                "name": station["town"] or station["name"].replace(" Station", ""),
+                "name": area_name,
                 "station": station["name"],
                 "commute_minutes": train_time + walking_buffer,
                 "train_minutes": train_time,
