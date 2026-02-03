@@ -511,10 +511,13 @@ footer a {
 
 .area-name-link {
     color: var(--primary);
+    text-decoration: underline;
+    text-decoration-color: rgba(37, 99, 235, 0.4);
+    text-underline-offset: 2px;
 }
 
 .area-table-row:hover .area-name-link {
-    text-decoration: underline;
+    text-decoration-color: var(--primary);
 }
 
 .station-cell {
