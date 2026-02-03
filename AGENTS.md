@@ -67,6 +67,23 @@ Next up: Hitchin
 - **OpenRent:** Simple HTML, requests + BeautifulSoup should work
 - All scrapers should respect rate limits and rotate user agents
 
+## Map Integration
+
+The dashboard includes an interactive Leaflet + OpenStreetMap map showing all commutable areas.
+
+- **Leaflet JS/CSS** loaded from unpkg CDN (version 1.9.4)
+- **Marker colors:** Green = explored, Blue = pending, Red = King's Cross
+- **Marker size:** Larger markers for higher scores (20-32px based on score/100)
+- **Data source:** Areas are rendered server-side via Jinja2 template from areas.yaml
+- **King's Cross coords:** 51.5309, -0.1233 (destination marker)
+- **Responsive:** Map height adapts to screen size (450px desktop, 350px tablet, 280px mobile)
+
+When modifying the map:
+- Keep Leaflet CSS before app styles (in `<head>`)
+- Keep Leaflet JS before map init script (bottom of `<body>`)
+- Popup content includes link to area detail page
+- Markers auto-fit to show all areas on initial load
+
 ## Development Tips
 
 - Run `python -m pytest tests/` before committing
